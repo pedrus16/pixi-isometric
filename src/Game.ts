@@ -19,7 +19,7 @@ export class Game {
     start() {
         this.graphics.initialize(this.update);
         this.graphics.load(tilesJSON, () => {
-            this.addEntity(new IsometricTerrain(0, 0, 10, 10, []));
+            this.addEntity(new IsometricTerrain(10, 10));
         });
     }
 

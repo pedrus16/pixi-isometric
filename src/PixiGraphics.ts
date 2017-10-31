@@ -11,7 +11,7 @@ export class PixiSprite extends Sprite {
         if (rectangle) {
             pixiTexture.frame = new PIXI.Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         }
-        this._sprite = new PIXI.Sprite(pixiTexture); 
+        this._sprite = new PIXI.Sprite(pixiTexture);
     }
 
     set x(x: number) {
@@ -25,6 +25,14 @@ export class PixiSprite extends Sprite {
         this._sprite.y = y;
     }
     get y(): number { return this._y; }
+
+    set texture(texture: string) {
+        this._texture = texture;
+        this._sprite.texture = PIXI.Texture.fromFrame(texture);
+    }
+
+    get height(): number { return this._sprite.height; }
+    get width(): number { return this._sprite.width; }
 
     get pixiSprite(): any { return this._sprite; }
 

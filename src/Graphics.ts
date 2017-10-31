@@ -16,12 +16,16 @@ export class Sprite {
     }
 
     get texture(): string { return this._texture; }
+    set texture(texture: string) { this._texture = texture; }
 
     get x(): number { return this._x; }
     set x(x: number) { this._x = x; }
 
     get y(): number { return this._y; }
     set y(y: number) { this._y = y; }
+
+    get width(): number { return 0; }
+    get height(): number { return 0; }
 
 }
 

@@ -1,27 +1,29 @@
-import { Camera, Graphics, Rectangle, Sprite } from './Graphics';
+import { Container, Graphics, Rectangle, Sprite } from './Graphics';
 
-export class PixiCamera extends Camera {
+
+export interface Renderable {
+    renderable: any;
+}
+
+
+export class PixiContainer implements Container, Renderable {
 
     private _container: any;
 
-    constructor() {
-        super();
-        this._container = new PIXI.Container();
+    constructor(particle?: boolean) {
+        if (particle) {
+            this._container = new PIXI.particles.ParticleContainer(1000000);
+        }
+        else {
+            this._container = new PIXI.Container();
+        }
     }
 
-    get x() { return this.container.x; }
-    set x(x: number) { this.container.x = x; }
+    get x() { return this._container.x; }
+    set x(x: number) { this._container.x = x; }
 
-    get y() { return this.container.y; }
-    set y(y: number) { this.container.y = y; }
-
-    get container(): any { return this._container; }
-
-    addSprites(sprites: PixiSprite[]) {
-        const pixiSprites = sprites.map((sprite) => sprite.pixiSprite);
-        if (!pixiSprites || !pixiSprites.length) { return; }
-        this._container.addChild(...pixiSprites);
-    }
+    get y() { return this._container.y; }
+    set y(y: number) { this._container.y = y; }
 
     get scale(): number { return this._container.scale.x; }
     set scale(scale: number) {
@@ -29,14 +31,22 @@ export class PixiCamera extends Camera {
         this._container.scale.y = scale;
     }
 
+    get renderable(): any { return this._container; }
+
+    add(element: PixiSprite | PixiContainer) {
+        this._container.addChild(element.renderable);
+    }
 }
 
-export class PixiSprite extends Sprite {
 
+export class PixiSprite implements Sprite, Renderable {
+
+    private _x: number = 0;
+    private _y: number = 0;
+    private _texture: string;
     private _sprite: any;
 
     constructor(texture: string, rectangle?: Rectangle) {
-        super(texture, rectangle);
         const pixiTexture = PIXI.utils.TextureCache[texture];
         if (rectangle) {
             pixiTexture.frame = new PIXI.Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
@@ -64,16 +74,17 @@ export class PixiSprite extends Sprite {
     get height(): number { return this._sprite.height; }
     get width(): number { return this._sprite.width; }
 
-    get pixiSprite(): any { return this._sprite; }
+    get renderable(): any { return this._sprite; }
+
+    get render(): boolean { return this._sprite.renderable; }
+    set render(render: boolean) { this._sprite.renderable = render; }
 
 }
+
 
 export class PixiGraphics implements Graphics {
 
     private app: any;
-    private camera: any;
-
-    private fpsDisplay: any;
 
     initialize(updateCallback: Function) {
         var type = "WebGL";
@@ -87,35 +98,25 @@ export class PixiGraphics implements Graphics {
         this.app.ticker.add(() => {
             updateCallback(this.app.ticker.deltaTime);
         });
-        this.camera = new PIXI.Container();
-        this.app.stage.addChild(this.camera);
     }
 
     load(file: string, callback?: Function): void {
         PIXI.loader.add(file).load(callback);
     }
 
-    addSprite(sprite: PixiSprite) {
-        this.camera.addChild(sprite.pixiSprite);
+    add(element: PixiSprite | PixiContainer) {
+        this.app.stage.addChild(element.renderable);
     }
 
     createSprite(texture: string, rectangle?: Rectangle): PixiSprite {
         return new PixiSprite(texture, rectangle);
     }
 
-    addCamera(camera: PixiCamera) {
-        this.app.stage.addChild(camera.container);
+    createContainer(): PixiContainer {
+        return new PixiContainer();
     }
 
-    createCamera(): Camera {
-        return new PixiCamera();
-    }
-
-    set cameraPos(coord: [number, number]) {
-        this.camera.x = coord[0];
-        this.camera.y = coord[1];
-    }
-    get cameraPos(): [number, number] {
-        return [this.camera.x, this.camera.y];
+    createParticleContainer(): PixiContainer {
+        return new PixiContainer(true);
     }
 }

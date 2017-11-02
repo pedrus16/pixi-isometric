@@ -1,4 +1,4 @@
-import { Sprite, Graphics } from './Graphics';
+import { Graphics, Renderable } from './Graphics';
 
 export class Entity {
 
@@ -7,16 +7,13 @@ export class Entity {
     private _y: number;
     private _graphics: Graphics;
 
-    protected _sprites: Sprite[];
-
-    constructor(x: number = 0, y: number = 0) {
+    constructor(x: number = 0, y: number = 0, graphics: Graphics) {
         this._x = x;
         this._y = y;
+        this._graphics = graphics;
     }
 
-    initialize(graphics: Graphics) {
-        this.graphics = graphics;
-    }
+    initialize() {}
 
     update(dt: number): void {}
 
@@ -25,8 +22,6 @@ export class Entity {
 
     set graphics(graphics: Graphics) { this._graphics = graphics; }
     get graphics(): Graphics { return this._graphics; }
-
-    get sprites(): Sprite[] { return this._sprites; }
 
 }
 

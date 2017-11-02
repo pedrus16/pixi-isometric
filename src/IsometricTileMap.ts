@@ -1,5 +1,5 @@
 import { Entity } from './Entity';
-import { Graphics, Sprite } from './Graphics';
+import { Graphics, Container, Sprite } from './Graphics';
 
 
 export class Tile {
@@ -18,17 +18,21 @@ export class Tile {
 
 }
 
-export class IsometricTerrain extends Entity {
+export class IsometricTileMap extends Entity {
 
     private _width: number;
     private _height: number;
+    private _container: Container;
+    private _sprites: Sprite[];
     private _tileset: string[];
     private _tiles: Tile[];
 
-    constructor(width: number, height: number) {
-        super();
+    constructor(width: number, height: number, graphics: Graphics, container: Container) {
+        super(0, 0, graphics);
+
         this._width = width;
         this._height = height;
+        this._container = container;
         this._tiles = [];
         this._tileset = [
             "landscapeTiles_001.png",
@@ -104,30 +108,39 @@ export class IsometricTerrain extends Entity {
         ];
     }
 
-    initialize(graphics: Graphics) {
-        super.initialize(graphics);
+    initialize() {
+        super.initialize();
 
+        const particleContainer = this.graphics.createContainer();
         this._sprites = [];
         for (let i = 0; i < this._width * this._height; i++) {
             const randomIndex = Math.floor(Math.random() * this._tileset.length);
-            const sprite = graphics.createSprite(this._tileset[66]);
             const x = (i % this._width);
             const y = Math.floor(i / this._width);
-            const tile = new Tile(x, y, sprite);
-            this._tiles.push(tile);
+            
+            // const tile = new Tile(x, y, sprite);
+            // this._tiles.push(tile);
 
+            const sprite = this.graphics.createSprite(this._tileset[66]);
             const transform = new PIXI.Matrix(1, 0, 0, 1, x, y);
             transform.rotate(Math.PI * 0.25);
             transform.scale(1, 0.5);
-
             sprite.x = transform.tx * 93;
             sprite.y = transform.ty * 93 - sprite.height + 91;
+
             this._sprites.push(sprite);
+            particleContainer.add(sprite);
+        }
+        this._container.add(particleContainer);
+    }
+
+    update(dt: number) {
+        for (let i = 0; i < this._sprites.length; ++i) {
+            const sprite = this._sprites[i];
+            sprite.render = true; // TODO
         }
     }
 
-    update(dt: number) {}
-
 }
 
-export default IsometricTerrain;
+export default IsometricTileMap;

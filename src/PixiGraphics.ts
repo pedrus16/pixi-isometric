@@ -1,5 +1,35 @@
-import { Graphics, Rectangle, Sprite } from './Graphics';
+import { Camera, Graphics, Rectangle, Sprite } from './Graphics';
 
+export class PixiCamera extends Camera {
+
+    private _container: any;
+
+    constructor() {
+        super();
+        this._container = new PIXI.Container();
+    }
+
+    get x() { return this.container.x; }
+    set x(x: number) { this.container.x = x; }
+
+    get y() { return this.container.y; }
+    set y(y: number) { this.container.y = y; }
+
+    get container(): any { return this._container; }
+
+    addSprites(sprites: PixiSprite[]) {
+        const pixiSprites = sprites.map((sprite) => sprite.pixiSprite);
+        if (!pixiSprites || !pixiSprites.length) { return; }
+        this._container.addChild(...pixiSprites);
+    }
+
+    get scale(): number { return this._container.scale.x; }
+    set scale(scale: number) {
+        this._container.scale.x = scale;
+        this._container.scale.y = scale;
+    }
+
+}
 
 export class PixiSprite extends Sprite {
 
@@ -41,6 +71,9 @@ export class PixiSprite extends Sprite {
 export class PixiGraphics implements Graphics {
 
     private app: any;
+    private camera: any;
+
+    private fpsDisplay: any;
 
     initialize(updateCallback: Function) {
         var type = "WebGL";
@@ -54,6 +87,8 @@ export class PixiGraphics implements Graphics {
         this.app.ticker.add(() => {
             updateCallback(this.app.ticker.deltaTime);
         });
+        this.camera = new PIXI.Container();
+        this.app.stage.addChild(this.camera);
     }
 
     load(file: string, callback?: Function): void {
@@ -61,10 +96,26 @@ export class PixiGraphics implements Graphics {
     }
 
     addSprite(sprite: PixiSprite) {
-        this.app.stage.addChild(sprite.pixiSprite);
+        this.camera.addChild(sprite.pixiSprite);
     }
 
     createSprite(texture: string, rectangle?: Rectangle): PixiSprite {
         return new PixiSprite(texture, rectangle);
+    }
+
+    addCamera(camera: PixiCamera) {
+        this.app.stage.addChild(camera.container);
+    }
+
+    createCamera(): Camera {
+        return new PixiCamera();
+    }
+
+    set cameraPos(coord: [number, number]) {
+        this.camera.x = coord[0];
+        this.camera.y = coord[1];
+    }
+    get cameraPos(): [number, number] {
+        return [this.camera.x, this.camera.y];
     }
 }

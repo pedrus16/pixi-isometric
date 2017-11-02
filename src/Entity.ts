@@ -1,4 +1,4 @@
-import { Graphics } from './Graphics';
+import { Sprite, Graphics } from './Graphics';
 
 export class Entity {
 
@@ -6,6 +6,8 @@ export class Entity {
     private _x: number;
     private _y: number;
     private _graphics: Graphics;
+
+    protected _sprites: Sprite[];
 
     constructor(x: number = 0, y: number = 0) {
         this._x = x;
@@ -23,6 +25,8 @@ export class Entity {
 
     set graphics(graphics: Graphics) { this._graphics = graphics; }
     get graphics(): Graphics { return this._graphics; }
+
+    get sprites(): Sprite[] { return this._sprites; }
 
 }
 

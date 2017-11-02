@@ -5,6 +5,21 @@ export interface Rectangle {
     height: number;
 }
 
+export class Camera {
+
+    get x(): number { return 0; }
+    set x(x: number) {}
+
+    get y(): number { return 0; }
+    set y(y: number) {}
+
+    get scale(): number { return 1; }
+    set scale(scale: number) {}
+
+    addSprites(sprites: Sprite[]): void {}
+
+}
+
 export class Sprite {
 
     protected _x: number = 0;
@@ -32,8 +47,15 @@ export class Sprite {
 export interface Graphics {
 	
     initialize(updateCallback: Function): void;
+
     load(file: string, callback?: Function): void;
+
     addSprite(sprite: Sprite): void;
+
     createSprite(texture: string, rectangle?: Rectangle): Sprite;
+
+    addCamera(camera: Camera): void;
+
+    createCamera(): Camera;
 
 }

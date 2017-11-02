@@ -107,6 +107,7 @@ export class IsometricTerrain extends Entity {
     initialize(graphics: Graphics) {
         super.initialize(graphics);
 
+        this._sprites = [];
         for (let i = 0; i < this._width * this._height; i++) {
             const randomIndex = Math.floor(Math.random() * this._tileset.length);
             const sprite = graphics.createSprite(this._tileset[66]);
@@ -119,9 +120,9 @@ export class IsometricTerrain extends Entity {
             transform.rotate(Math.PI * 0.25);
             transform.scale(1, 0.5);
 
-            sprite.x = transform.tx * 91;
-            sprite.y = transform.ty * 91 - sprite.height + 91;
-            graphics.addSprite(sprite);
+            sprite.x = transform.tx * 93;
+            sprite.y = transform.ty * 93 - sprite.height + 91;
+            this._sprites.push(sprite);
         }
     }
 

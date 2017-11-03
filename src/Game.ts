@@ -5,8 +5,7 @@ import { Input, WHEEL_DIRECTION } from './Input';
 import { IsometricTileMap, Tile } from './IsometricTileMap';
 import { Terrain } from './Terrain';
 
-import tiles from './tiles.png';
-import tilesJSON from './tiles.json';
+import tilesJSON from './tiles_2.json';
 
 export class Game {
 
@@ -37,11 +36,10 @@ export class Game {
         this.graphics.initialize(this.update);
         this.graphics.load(tilesJSON, () => {
             this.camera = this.graphics.createContainer();
-            this.camera.scale = 0.05;
+            this.camera.scale = 0.5;
             this.graphics.add(this.camera);
             
-            // const tilemap = new IsometricTileMap(1000, 1000, this.graphics, this.camera);
-            this.terrain = new Terrain(0, 0, 50, 50, this.graphics, this.camera);
+            this.terrain = new Terrain(0, 0, 200, 200, this.graphics, this.camera);
             this.terrain.initialize();
             this.addEntity(this.terrain);
         });
@@ -59,11 +57,6 @@ export class Game {
         else {
             this.initialePos = null;
         }
-
-        this.elapsed += dt;
-        // if (this.tilemap) {
-        //     this.tilemap.setTiles(this.generateTiles(this.elapsed));
-        // }
 
         this.entities.forEach((entity) => entity.update(dt));
     }

@@ -91,7 +91,7 @@ export class PixiSprite implements Sprite, Renderable {
 
     set texture(texture: string) {
         this._texture = texture;
-        this._sprite.texture = PIXI.Texture.fromFrame(texture);
+        this._sprite.texture = PIXI.utils.TextureCache[texture];
     }
 
     get height(): number { return this._sprite.height; }
@@ -116,7 +116,10 @@ export class PixiGraphics implements Graphics {
         }
         PIXI.utils.sayHello(type);
 
-        this.app = new PIXI.Application();
+        this.app = new PIXI.Application({
+            width: window.innerWidth,
+            height: window.innerHeight,
+        });
         document.body.appendChild(this.app.view);
         this.app.ticker.speed = 1;
         this.app.ticker.add(() => {

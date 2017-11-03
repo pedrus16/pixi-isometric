@@ -133,7 +133,7 @@ export const TILESET = [
 ];
 
 const TILE_WIDTH = 92;
-const TILE_HEIGHT = 16;
+const TILE_HEIGHT = 32;
 
 export class Tile {
 

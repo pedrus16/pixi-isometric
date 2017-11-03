@@ -56,10 +56,10 @@ export class Terrain extends Entity {
         const W: number = this.getHeightAt(x, y + 1) - tileHeight;
 
         const FLAT = 66;
-        const SLOPE_WS = 97;
-        const SLOPE_NE = 98;
-        const SLOPE_SE = 105;
-        const SLOPE_NW = 90;
+        const SLOPE_WS = 97; // 97 - 21
+        const SLOPE_NE = 98; // 98 - 9
+        const SLOPE_SE = 105; // 105 - 14
+        const SLOPE_NW = 90; // 90 - 15
 
         const SLOPE_N = 20;
         const SLOPE_S = 35;

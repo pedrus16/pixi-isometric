@@ -2,7 +2,8 @@ import { Entity } from './Entity';
 import { Container, Graphics } from './Graphics';
 import { PixiGraphics } from './PixiGraphics';
 import { Input, WHEEL_DIRECTION } from './Input';
-import { IsometricTileMap } from './IsometricTileMap';
+import { IsometricTileMap, Tile } from './IsometricTileMap';
+import { Terrain } from './Terrain';
 
 import tiles from './tiles.png';
 import tilesJSON from './tiles.json';
@@ -15,6 +16,8 @@ export class Game {
     private input: Input;
 
     private initialePos = [0, 0];
+    private terrain: Terrain;
+    private elapsed: number = 0;
 
     constructor() {
         this.graphics = new PixiGraphics();
@@ -34,11 +37,13 @@ export class Game {
         this.graphics.initialize(this.update);
         this.graphics.load(tilesJSON, () => {
             this.camera = this.graphics.createContainer();
+            this.camera.scale = 0.05;
             this.graphics.add(this.camera);
             
-            const tilemap = new IsometricTileMap(100, 100, this.graphics, this.camera);
-            tilemap.initialize();
-            this.addEntity(tilemap);
+            // const tilemap = new IsometricTileMap(1000, 1000, this.graphics, this.camera);
+            this.terrain = new Terrain(0, 0, 50, 50, this.graphics, this.camera);
+            this.terrain.initialize();
+            this.addEntity(this.terrain);
         });
     }
 
@@ -54,6 +59,11 @@ export class Game {
         else {
             this.initialePos = null;
         }
+
+        this.elapsed += dt;
+        // if (this.tilemap) {
+        //     this.tilemap.setTiles(this.generateTiles(this.elapsed));
+        // }
 
         this.entities.forEach((entity) => entity.update(dt));
     }

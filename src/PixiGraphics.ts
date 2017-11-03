@@ -12,7 +12,7 @@ export class PixiContainer implements Container, Renderable {
 
     constructor(particle?: boolean) {
         if (particle) {
-            this._container = new PIXI.particles.ParticleContainer(1000000);
+            this._container = new PIXI.particles.ParticleContainer(100000);
         }
         else {
             this._container = new PIXI.Container();
@@ -36,6 +36,22 @@ export class PixiContainer implements Container, Renderable {
     add(element: PixiSprite | PixiContainer) {
         this._container.addChild(element.renderable);
     }
+
+    sort(): void {
+        this._container.children.sort((a: any, b: any) => {
+            if (a.z > b.z) { return 1; }
+            if (a.z < b.z) { return -1; }
+            if (a.y > b.y) { return 1; }
+            if (a.y < b.y) { return -1; }
+            if (a.x > b.x) { return 1; }
+            if (a.x < b.x) { return -1; }
+            return 0;
+        });
+    }
+
+    remove(child: PixiSprite | PixiContainer) {
+        this._container.removeChild(child.renderable);
+    }
 }
 
 
@@ -43,6 +59,7 @@ export class PixiSprite implements Sprite, Renderable {
 
     private _x: number = 0;
     private _y: number = 0;
+    private _z: number = 0;
     private _texture: string;
     private _sprite: any;
 
@@ -65,6 +82,12 @@ export class PixiSprite implements Sprite, Renderable {
         this._sprite.y = y;
     }
     get y(): number { return this._y; }
+
+    set z(z: number) {
+        this._z = z;
+        this._sprite.z = z;
+    }
+    get z(): number { return this._z; }
 
     set texture(texture: string) {
         this._texture = texture;
@@ -95,6 +118,7 @@ export class PixiGraphics implements Graphics {
 
         this.app = new PIXI.Application();
         document.body.appendChild(this.app.view);
+        this.app.ticker.speed = 1;
         this.app.ticker.add(() => {
             updateCallback(this.app.ticker.deltaTime);
         });

@@ -13,12 +13,15 @@ export interface Container {
     x: number;
     y: number;
     scale: number;
+    sort(): void;
     add(element: Sprite | Container): void;
+    remove(element: Sprite | Container): void;
 }
 
 export interface Sprite {
     x: number;
     y: number;
+    z: number;
     texture: string;
     width: number;
     height: number;

@@ -11,7 +11,12 @@ export class Input {
 
     private _mouseWheelCallback: Function;
 
+    private _keys: any;
+
 	constructor() {
+
+        this._keys = {};
+
         window.addEventListener('mousedown', (event) => {
             this._mouseDown = true;
         });
@@ -36,9 +41,14 @@ export class Input {
                 }
                 this._mouseWheelCallback(direction);
             }
-            // if (this.camera) {
-            //     this.camera.scale = this.mouse.zoom;
-            // }
+        });
+
+        window.addEventListener('keydown', (event) => {
+            this._keys[event.key] = true;
+        });
+
+        window.addEventListener('keyup', (event) => {
+            this._keys[event.key] = false;
         });
     }
 
@@ -48,6 +58,10 @@ export class Input {
 
     onMouseWheel(callback: Function): void {
         this._mouseWheelCallback = callback;
+    }
+
+    isKeyDown(key: string): boolean {
+        return this._keys[key] || false;
     }
 
 }

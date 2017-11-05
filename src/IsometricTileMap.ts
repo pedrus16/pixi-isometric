@@ -217,8 +217,11 @@ export class Tile {
         this._sprite.z = z;
     }
 
+    onClick(callback: Function) {
+        this._sprite.onClick(callback);
+    }
+
     private toIso(x: number, y: number): { x: number, y: number } {
-        const transform = new PIXI.Matrix(1, 0, 0, 1, x * TILE_WIDTH, y * TILE_WIDTH);
         const isoX = x * TILE_WIDTH * 0.5 - y * TILE_WIDTH * 0.5;
         const isoY = y * TILE_WIDTH * 0.25 + x * TILE_WIDTH * 0.25;
         return { x: isoX, y: isoY };
@@ -233,6 +236,7 @@ export class IsometricTileMap extends Entity {
     private _camera: Camera;
     private _tiles: { [key: number]: Tile };
     private _particleContainer: Container;
+    private _callback: Function;
 
     constructor(width: number, height: number, graphics: Graphics, camera: Camera) {
         super(0, 0, graphics); 
@@ -264,6 +268,9 @@ export class IsometricTileMap extends Entity {
                 tileObject.y = tile.y;
                 this._tiles[index] = tileObject;
                 this._particleContainer.add(tileObject.sprite);
+                tileObject.onClick(() => {
+                    this.emitOnClick(tileObject.x, tileObject.y);
+                });
             }
             tileObject.z = tile.z;
             tileObject.tile = tile.tile;
@@ -286,6 +293,14 @@ export class IsometricTileMap extends Entity {
                 }
             }
         }
+    }
+
+    onClick(callback: Function) {
+        this._callback = callback;
+    }
+
+    private emitOnClick(x: number, y: number) {
+        if (this._callback) { this._callback(x, y); }
     }
 
 }

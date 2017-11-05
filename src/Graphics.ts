@@ -26,6 +26,7 @@ export interface Sprite {
     width: number;
     height: number;
     render: boolean;
+    onClick(callback: Function): void;
 }
 
 export interface Graphics {

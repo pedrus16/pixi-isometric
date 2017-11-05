@@ -69,6 +69,7 @@ export class PixiSprite implements Sprite, Renderable {
             pixiTexture.frame = new PIXI.Rectangle(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
         }
         this._sprite = new PIXI.Sprite(pixiTexture);
+        this._sprite.interactive = true;
     }
 
     set x(x: number) {
@@ -102,6 +103,10 @@ export class PixiSprite implements Sprite, Renderable {
 
     get render(): boolean { return this._sprite.visible; }
     set render(render: boolean) { this._sprite.visible = render; }
+
+    onClick(callback: Function): void {
+        this._sprite.on('pointerdown', callback);
+    }
 
 }
 

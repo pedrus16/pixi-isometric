@@ -35,4 +35,6 @@ export interface Graphics {
     createSprite(texture: string, rectangle?: Rectangle): Sprite;
     createContainer(): Container;
     createParticleContainer(): Container;
+    screenWidth: number;
+    screenHeight: number;
 }

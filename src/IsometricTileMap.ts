@@ -1,35 +1,7 @@
 import { Entity } from './Entity';
+import { Camera } from './Camera';
 import { Graphics, Container, Sprite } from './Graphics';
 
-export const TILESET = [
-    "tile_01.png",
-    "tile_02.png",
-    "tile_03.png",
-    "tile_04.png",
-    "tile_05.png",
-    "tile_06.png",
-    "tile_07.png",
-    "tile_08.png",
-    "tile_09.png",
-    "tile_10.png",
-    "tile_11.png",
-    "tile_12.png",
-    "tile_13.png",
-    "tile_14.png",
-    "tile_15.png",
-    "tile_16.png",
-    "tile_17.png",
-    "tile_18.png",
-    "tile_19.png",
-    "tile_20.png",
-    "tile_21.png",
-    "tile_22.png",
-    "tile_23.png",
-    "tile_24.png",
-];
-
-const TILE_WIDTH = 45;
-const TILE_HEIGHT = 16;
 
 // export const TILESET = [
 //     "landscapeTiles_001.png",
@@ -164,6 +136,36 @@ const TILE_HEIGHT = 16;
 // const TILE_WIDTH = 92;
 // const TILE_HEIGHT = 32;
 
+export const TILESET = [
+    "tile_01.png",
+    "tile_02.png",
+    "tile_03.png",
+    "tile_04.png",
+    "tile_05.png",
+    "tile_06.png",
+    "tile_07.png",
+    "tile_08.png",
+    "tile_09.png",
+    "tile_10.png",
+    "tile_11.png",
+    "tile_12.png",
+    "tile_13.png",
+    "tile_14.png",
+    "tile_15.png",
+    "tile_16.png",
+    "tile_17.png",
+    "tile_18.png",
+    "tile_19.png",
+    "tile_20.png",
+    "tile_21.png",
+    "tile_22.png",
+    "tile_23.png",
+    "tile_24.png",
+];
+
+const TILE_WIDTH = 64;
+const TILE_HEIGHT = 16;
+
 export class Tile {
 
     private _x: number;
@@ -179,8 +181,8 @@ export class Tile {
         this._tile = tile;
         this._sprite = graphics.createSprite(TILESET[tile]);
         const isoPos = this.toIso(x, y);
-        this._sprite.x = isoPos.x * TILE_WIDTH;
-        this._sprite.y = isoPos.y * TILE_WIDTH - this._sprite.height + 91 - z * TILE_HEIGHT;
+        this._sprite.x = isoPos.x;
+        this._sprite.y = isoPos.y - this._sprite.height - z * TILE_HEIGHT;
         this._sprite.z = z;
     }
 
@@ -195,31 +197,31 @@ export class Tile {
     set x(x: number) {
         this._x = x;
         const isoPos = this.toIso(x, this._y);
-        this._sprite.x = isoPos.x * TILE_WIDTH;
-        this._sprite.y = isoPos.y * TILE_WIDTH - this._sprite.height + 91 - this._z * TILE_HEIGHT;
+        this._sprite.x = isoPos.x;
+        this._sprite.y = isoPos.y - this._sprite.height - this._z * TILE_HEIGHT;
     }
 
     get y(): number { return this._y; }
     set y(y: number) {
         this._y = y;
         const isoPos = this.toIso(this._x, y);
-        this._sprite.x = isoPos.x * TILE_WIDTH;
-        this._sprite.y = isoPos.y * TILE_WIDTH - this._sprite.height + 91 - this._z * TILE_HEIGHT;
+        this._sprite.x = isoPos.x;
+        this._sprite.y = isoPos.y - this._sprite.height - this._z * TILE_HEIGHT;
     }
 
     get z(): number { return this._z; }
     set z(z: number) { 
         this._z = z; 
         const isoPos = this.toIso(this._x, this._y);
-        this._sprite.y = isoPos.y * TILE_WIDTH - this._sprite.height + 91 - this._z * TILE_HEIGHT;
+        this._sprite.y = isoPos.y - this._sprite.height - this._z * TILE_HEIGHT;
         this._sprite.z = z;
     }
 
     private toIso(x: number, y: number): { x: number, y: number } {
-        const transform = new PIXI.Matrix(1, 0, 0, 1, x, this._y);
-        transform.rotate(Math.PI * 0.25);
-        transform.scale(1, 0.5);
-        return { x: transform.tx, y: transform.ty };
+        const transform = new PIXI.Matrix(1, 0, 0, 1, x * TILE_WIDTH, y * TILE_WIDTH);
+        const isoX = x * TILE_WIDTH * 0.5 - y * TILE_WIDTH * 0.5;
+        const isoY = y * TILE_WIDTH * 0.25 + x * TILE_WIDTH * 0.25;
+        return { x: isoX, y: isoY };
     }
 
 }
@@ -228,24 +230,24 @@ export class IsometricTileMap extends Entity {
 
     private _width: number;
     private _height: number;
-    private _container: Container;
+    private _camera: Camera;
     private _tiles: { [key: number]: Tile };
     private _particleContainer: Container;
 
-    constructor(width: number, height: number, graphics: Graphics, container: Container) {
-        super(0, 0, graphics);
-
+    constructor(width: number, height: number, graphics: Graphics, camera: Camera) {
+        super(0, 0, graphics); 
         this._width = width;
         this._height = height;
-        this._container = container;
+        this._camera = camera;
         this._tiles = {};
+        this._camera.onBoundariesUpdate(() => this.updateCulling());
     }
 
     initialize() {
         super.initialize();
-
         this._particleContainer = this.graphics.createContainer();
-        this._container.add(this._particleContainer);
+        this._camera.add(this._particleContainer);
+        this.updateCulling();
     }
 
     setTiles(tiles: { x: number, y: number, z: number, tile: number }[]) {
@@ -266,13 +268,24 @@ export class IsometricTileMap extends Entity {
             tileObject.z = tile.z;
             tileObject.tile = tile.tile;
         }
+        this.updateCulling();
     }
 
-    update(dt: number) {
-        // for (let i = 0; i < this._sprites.length; ++i) {
-        //     const sprite = this._sprites[i];
-        //     sprite.render = true; // TODO
-        // }
+    updateCulling() {
+        for (let key in this._tiles) {
+            if (this._tiles.hasOwnProperty(key)) {
+                const tile = this._tiles[key];
+                const camBounds = this._camera.boundaries;
+                camBounds.left -= TILE_WIDTH * 2;
+                camBounds.top -= TILE_HEIGHT * 4;
+                if (camBounds.left <= tile.sprite.x && tile.sprite.x <= camBounds.right && camBounds.top <= tile.sprite.y && tile.sprite.y <= camBounds.bottom) {
+                    tile.sprite.render = true;
+                }
+                else {
+                    tile.sprite.render = false;   
+                }
+            }
+        }
     }
 
 }

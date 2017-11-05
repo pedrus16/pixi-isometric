@@ -2,10 +2,10 @@ import { Graphics, Renderable } from './Graphics';
 
 export class Entity {
 
-    private _id: number;
-    private _x: number;
-    private _y: number;
-    private _graphics: Graphics;
+    protected _id: number;
+    protected _x: number;
+    protected _y: number;
+    protected _graphics: Graphics;
 
     constructor(x: number = 0, y: number = 0, graphics: Graphics) {
         this._x = x;

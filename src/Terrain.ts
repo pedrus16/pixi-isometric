@@ -1,5 +1,6 @@
 import { Entity } from './Entity';
-import { Container, Graphics } from './Graphics';
+import { Camera } from './Camera';
+import { Graphics } from './Graphics';
 import { IsometricTileMap } from './IsometricTileMap';
 
 const SLOPES = {
@@ -14,41 +15,52 @@ export class Terrain extends Entity {
     private _tileMap: IsometricTileMap;
     private _elapsed: number;
 
-    constructor(x: number = 0, y: number = 0, width: number, height: number, graphics: Graphics, container: Container) {
+    constructor(x: number = 0, y: number = 0, width: number, height: number, graphics: Graphics, camera: Camera) {
         super(0, 0, graphics);
         this._width = width + 1;
         this._height = height + 1;
         this._heightMap = [];
+        for (let i = 0; i < this._width * this._height; ++i) { this._heightMap.push(0); }
         this._elapsed = 0;
-        this._tileMap = new IsometricTileMap(width, height, graphics, container);
-        this._tileMap.initialize();
+        this._tileMap = new IsometricTileMap(width, height, graphics, camera);
+    }
+
+    get heightMap(): number[] {
+        return this._heightMap;
     }
 
     initialize() {
         this._tileMap.initialize();
-        // this.generateHeightMap();
+        this.updateTiles();
+        this.generateHeightMap();
     }
 
     update(dt: number) {
         this._elapsed += dt;
-        this.generateHeightMap(this._elapsed * 1);
+        // this.generateHeightMap(this._elapsed * 0.5);
+        this._tileMap.update(dt);
     }
 
-    generateHeightMap(t: number = 0): void {
-        const rate = 2;
-        const rate2 = 2;
+    setHeight(x: number, y: number, height: number) {
+        this._heightMap[y * this._width + x] = height;
+        this.updateTiles();
+    }
+
+    private generateHeightMap(t: number = 0): void {
+        const rate = 8;
+        const rate2 = 8;
         
         this._heightMap = [];
         for (let i = 0; i < this._width * this._height; ++i) {
             const x = i % this._width;
             const y = Math.floor(i / this._width);
-            const z = Math.floor(Math.sin((x + t * 0.05) / rate) * rate) - Math.floor(Math.sin((y + t * 0.1) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
+            const z = Math.floor(Math.sin((x + t * 0.5) / rate) * rate) - Math.floor(Math.sin((y + t) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
             this._heightMap.push(z);
         }
         this.updateTiles();
     }
 
-    updateTiles() {
+    private updateTiles() {
         const tiles = [];
         const width = this._width - 1;
         const height = this._height - 1;
@@ -60,11 +72,8 @@ export class Terrain extends Entity {
         this._tileMap.setTiles(tiles);
     }
 
-    get heightMap(): number[] {
-        return this._heightMap;
-    }
 
-    getTileAt(x: number, y: number): number {
+    private getTileAt(x: number, y: number): number {
         if (x >= this._width - 1 || y >= this._height - 1) { return 0; }
 
         const tileHeight = this.getHeightAt(x, y);
@@ -95,8 +104,6 @@ export class Terrain extends Entity {
         const SLOPE_N = 22;
         const SLOPE_E = 23;
 
-        // console.log(N, E, S, W);
-
         if (!W && S > 0 && E > 0) { return SLOPE_NW; }
         if (!E && W > 0 && S > 0) { return SLOPE_NE; }
         if (!W && S < 0 && E < 0) { return SLOPE_SE; }
@@ -110,7 +117,7 @@ export class Terrain extends Entity {
         return FLAT;
     }
 
-    getTileHeightAt(x: number, y: number): number {
+    private getTileHeightAt(x: number, y: number): number {
         const N: number = this.getHeightAt(x, y);
         const E: number = this.getHeightAt(x + 1, y);
         const S: number = this.getHeightAt(x + 1, y + 1);
@@ -119,7 +126,7 @@ export class Terrain extends Entity {
         return Math.min(N, S, E, W);
     }
 
-    getHeightAt(x: number, y: number): number {
+    private getHeightAt(x: number, y: number): number {
         return this._heightMap[y * this._width + x];
     }
 

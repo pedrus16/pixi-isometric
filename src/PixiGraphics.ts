@@ -92,6 +92,7 @@ export class PixiSprite implements Sprite, Renderable {
     set texture(texture: string) {
         this._texture = texture;
         this._sprite.texture = PIXI.utils.TextureCache[texture];
+        // this._sprite.texture = PIXI.Texture.fromFrame(texture);
     }
 
     get height(): number { return this._sprite.height; }
@@ -99,8 +100,8 @@ export class PixiSprite implements Sprite, Renderable {
 
     get renderable(): any { return this._sprite; }
 
-    get render(): boolean { return this._sprite.renderable; }
-    set render(render: boolean) { this._sprite.renderable = render; }
+    get render(): boolean { return this._sprite.visible; }
+    set render(render: boolean) { this._sprite.visible = render; }
 
 }
 
@@ -118,8 +119,9 @@ export class PixiGraphics implements Graphics {
 
         this.app = new PIXI.Application({
             width: window.innerWidth,
-            height: window.innerHeight,
+            height: window.innerHeight
         });
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         document.body.appendChild(this.app.view);
         this.app.ticker.speed = 1;
         this.app.ticker.add(() => {
@@ -146,4 +148,7 @@ export class PixiGraphics implements Graphics {
     createParticleContainer(): PixiContainer {
         return new PixiContainer(true);
     }
+
+    get screenWidth(): number { return this.app.screen.width; }
+    get screenHeight(): number { return this.app.screen.height; }
 }

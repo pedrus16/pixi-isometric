@@ -12,10 +12,12 @@ export interface Renderable {
 export interface Container {
     x: number;
     y: number;
+    z: number;
     scale: number;
     sort(): void;
     add(element: Sprite | Container): void;
     remove(element: Sprite | Container): void;
+    onClick(callback: Function): void;
 }
 
 export interface Sprite {
@@ -30,12 +32,14 @@ export interface Sprite {
 }
 
 export interface Graphics {
+    app: any;
     initialize(updateCallback: Function): void;
     load(file: string, callback?: Function): void;
     add(element: Sprite | Container): void;
     createSprite(texture: string, rectangle?: Rectangle): Sprite;
     createContainer(): Container;
     createParticleContainer(): Container;
+    createCircle(x: number, y: number, width: number, height: number): Container;
     screenWidth: number;
     screenHeight: number;
 }

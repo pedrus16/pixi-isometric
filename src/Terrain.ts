@@ -1,7 +1,7 @@
 import { Entity } from './Entity';
 import { Camera } from './Camera';
 import { Input } from './Input';
-import { Graphics } from './Graphics';
+import { Container, Graphics } from './Graphics';
 import { IsometricTileMap } from './IsometricTileMap';
 
 const SLOPES = {
@@ -17,6 +17,8 @@ export class Terrain extends Entity {
     private _elapsed: number;
     private _input: Input;
     private _camera: Camera;
+    private _cornerHitBoxes: Container[];
+    private _tileHitBoxes: Container[];
 
     constructor(x: number = 0, y: number = 0, width: number, height: number, graphics: Graphics, camera: Camera, input: Input) {
         super(0, 0, graphics);
@@ -28,14 +30,8 @@ export class Terrain extends Entity {
         this._camera = camera;
         this._tileMap = new IsometricTileMap(width, height, graphics, this._camera);
         this._input = input;
-        this._tileMap.onClick((x: number, y: number) => {
-            if (input.isKeyDown('Control')) {
-                this.decrementHeight(x, y);
-            }
-            else {
-                this.incrementHeight(x, y);
-            }
-        });
+        this._cornerHitBoxes = [];
+        this._tileHitBoxes = [];
     }
 
     get heightMap(): number[] {
@@ -45,21 +41,71 @@ export class Terrain extends Entity {
     initialize() {
         this._tileMap.initialize();
         this.updateTiles();
-        // this.generateHeightMap();
+        this.initializeHitBoxes();
     }
 
     update(dt: number) {
         this._elapsed += dt;
-        // this.generateHeightMap(this._elapsed * 0.5);
-        if (this._input.mouseDown) {
-            // const coord = this.screenToWorld(this._input.mouseX, this._input.mouseY);
-            // this.incrementHeight(coord.x, coord.y);
-        }
         this._tileMap.update(dt);
     }
 
     setHeight(x: number, y: number, height: number) {
         this._heightMap[y * this._width + x] = height;
+    }
+
+    private initializeHitBoxes() {
+        for (let i = 0; i < this._width * this._height; ++i) { 
+            this._heightMap.push(0); 
+
+            const x = i % this._width;
+            const y = Math.floor(i / this._width);
+            const TILE_WIDTH = 64;
+            const TILE_HEIGHT = 16;
+            const isoX = x * TILE_WIDTH * 0.5 - y * TILE_WIDTH * 0.5;
+            const isoY = y * TILE_WIDTH * 0.25 + x * TILE_WIDTH * 0.25 - this.getHeightAt(x, y) * TILE_HEIGHT;
+
+            const corner = this.graphics.createCircle(isoX + TILE_WIDTH * 0.5, isoY - TILE_WIDTH * 0.5, 8, 8);
+            corner.onClick(() => {
+                if (this._input.isKeyDown('Control')) {
+                    this.decrementHeight(x, y);
+                }
+                else {
+                    this.incrementHeight(x, y);
+                }
+            });
+            this._cornerHitBoxes.push(corner);
+            // this._camera.add(corner);
+
+            const center = this.graphics.createCircle(isoX + TILE_WIDTH * 0.5, isoY - TILE_WIDTH * 0.25, 16, 8);
+            center.onClick(() => {
+                if (this._input.isKeyDown('Control')) {
+                    this.decrementHeightRadius(x, y, 2);
+                }
+                else {
+                    this.incrementHeightRadius(x, y, 2);
+                }
+            });
+            this._tileHitBoxes.push(center);
+            this._camera.add(center);
+        }
+    }
+
+    private updateHitBoxes() {
+        for (let i = 0; i < this._width * this._height; ++i) { 
+            const x = i % this._width;
+            const y = Math.floor(i / this._width);
+            const TILE_WIDTH = 64;
+            const TILE_HEIGHT = 16;
+            const corner = this._cornerHitBoxes[i];
+            if (corner) {
+                corner.y = -this.getHeightAt(x, y) * TILE_HEIGHT;
+            }
+
+            const center = this._tileHitBoxes[i];
+            if (center) {
+                center.y = -this.getHeightAt(x, y) * TILE_HEIGHT;
+            }
+        }
     }
 
     private decrementHeight(x: number, y: number, update = true) {
@@ -114,6 +160,25 @@ export class Terrain extends Entity {
         }
     }
 
+    private incrementHeightRadius(centerX: number, centerY: number, radius: number) {
+        const startX = Math.floor(centerX + 1 - radius * 0.5);
+        const startY = Math.floor(centerY + 1 - radius * 0.5);
+        for (let x = 0; x < radius; ++x) {
+            for (let y = 0; y < radius; ++y) {
+                this.incrementHeight(startX + x,startY + y, false);
+            }
+        }
+        this.updateTiles();
+    }
+
+    private decrementHeightRadius(x: number, y: number, radius: number) {
+        this.decrementHeight(x, y, false);
+        this.decrementHeight(x + 1, y, false);
+        this.decrementHeight(x, y + 1, false);
+        this.decrementHeight(x + 1, y + 1, false);
+        this.updateTiles();
+    }
+
     private generateHeightMap(t: number = 0): void {
         const rate = 8;
         const rate2 = 8;
@@ -135,9 +200,12 @@ export class Terrain extends Entity {
         for (let i = 0; i < width * height; ++i) {
             const x = i % width;
             const y = Math.floor(i / width);
-            tiles.push({x: x, y: y, z: this.getTileHeightAt(x, y), tile: this.getTileAt(x, y) });
+            const z = this.getTileHeightAt(x, y);
+            tiles.push({x: x, y: y, z: z, tile: this.getTileAt(x, y) });
         }
         this._tileMap.setTiles(tiles);
+        this.updateHitBoxes();
+
     }
 
 

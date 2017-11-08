@@ -39,23 +39,23 @@ export class Game {
             this.camera = new Camera(0, 0, this.graphics.screenWidth, this.graphics.screenHeight, this.graphics);
             this.graphics.add(this.camera.container);
             
-            this.terrain = new Terrain(0, 0, 128, 128, this.graphics, this.camera, this.input);
+            this.terrain = new Terrain(0, 0, 32, 32, this.graphics, this.camera, this.input);
             this.terrain.initialize();
             this.addEntity(this.terrain);
         });
     }
 
     update(dt: number): void {
-        // if (this.input.mouseDown) {
-        //     if (!this.initialePos){
-        //         this.initialePos = [this.input.mouseX + this.camera.x, this.input.mouseY + this.camera.y];
-        //     }
-        //     this.camera.x = this.initialePos[0] - this.input.mouseX;
-        //     this.camera.y = this.initialePos[1] - this.input.mouseY;
-        // }
-        // else {
-        //     this.initialePos = null;
-        // }
+        if (this.input.mouseDown) {
+            if (!this.initialePos){
+                this.initialePos = [this.input.mouseX + this.camera.x, this.input.mouseY + this.camera.y];
+            }
+            this.camera.x = this.initialePos[0] - this.input.mouseX;
+            this.camera.y = this.initialePos[1] - this.input.mouseY;
+        }
+        else {
+            this.initialePos = null;
+        }
         this.entities.forEach((entity) => entity.update(dt));
     }
 

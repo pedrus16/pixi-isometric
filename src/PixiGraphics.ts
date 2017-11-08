@@ -25,6 +25,9 @@ export class PixiContainer implements Container, Renderable {
     get y() { return this._container.y; }
     set y(y: number) { this._container.y = y; }
 
+    get z() { return this._container.z; }
+    set z(z: number) { this._container.z = z; }
+
     get scale(): number { return this._container.scale.x; }
     set scale(scale: number) {
         this._container.scale.x = scale;
@@ -52,6 +55,12 @@ export class PixiContainer implements Container, Renderable {
     remove(child: PixiSprite | PixiContainer) {
         this._container.removeChild(child.renderable);
     }
+
+    onClick(callback: Function): void {
+        this._container.on('pointerdown', callback);
+    }
+
+    set container(container: any) { this._container = container; }
 }
 
 
@@ -113,7 +122,7 @@ export class PixiSprite implements Sprite, Renderable {
 
 export class PixiGraphics implements Graphics {
 
-    private app: any;
+    public app: any;
 
     initialize(updateCallback: Function) {
         var type = "WebGL";
@@ -152,6 +161,18 @@ export class PixiGraphics implements Graphics {
 
     createParticleContainer(): PixiContainer {
         return new PixiContainer(true);
+    }
+
+    createCircle(x: number, y: number, width: number, height: number): PixiContainer {
+        const graphics = new PIXI.Graphics();
+        graphics.beginFill(0xf1c40f);
+        graphics.drawShape(new PIXI.Ellipse(x, y, width, height));
+        graphics.endFill();
+        graphics.interactive = true;
+        graphics.renderable = false;
+        const container = new PixiContainer();
+        container.container = graphics;
+        return container;
     }
 
     get screenWidth(): number { return this.app.screen.width; }

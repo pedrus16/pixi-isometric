@@ -1,6 +1,7 @@
 export class PixiGraphics {
 
     public app: any;
+    public camera: any;
 
     constructor(updateCallback: Function) {
         var type = "WebGL";
@@ -18,7 +19,9 @@ export class PixiGraphics {
         this.app.ticker.speed = 1;
         this.app.ticker.add(() => {
             updateCallback(this.app.ticker.deltaTime);
-        });        
+        });
+        this.camera = new PIXI.Container();
+        this.app.stage.addChild(this.camera);
     }
 
 }

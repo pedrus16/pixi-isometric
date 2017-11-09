@@ -3,33 +3,6 @@ import { PixiGraphics } from './PixiGraphics';
 
 import tilesJSON from './tiles.json';
 
-const TILESET = [
-    "tile_01.png",
-    "tile_02.png",
-    "tile_03.png",
-    "tile_04.png",
-    "tile_05.png",
-    "tile_06.png",
-    "tile_07.png",
-    "tile_08.png",
-    "tile_09.png",
-    "tile_10.png",
-    "tile_11.png",
-    "tile_12.png",
-    "tile_13.png",
-    "tile_14.png",
-    "tile_15.png",
-    "tile_16.png",
-    "tile_17.png",
-    "tile_18.png",
-    "tile_19.png",
-    "tile_20.png",
-    "tile_21.png",
-    "tile_22.png",
-    "tile_23.png",
-    "tile_24.png",
-];
-
 enum SLOPE {
     FLAT = 0b00000,
     NORTH = 0b01000,
@@ -94,7 +67,7 @@ export class PixiIsometricMap {
     }
 
     private initialize() {
-        this._graphics.app.stage.addChild(this.container);
+        this._graphics.camera.addChild(this.container);
         for (let y = 0; y < this._map.height; ++y) {
             for (let x = 0; x < this._map.width; ++x) {
                 const texture = PIXI.utils.TextureCache[this.getTextureAt(x, y)];
@@ -109,6 +82,7 @@ export class PixiIsometricMap {
                 }
             }
         }
+        // this.container.cacheAsBitmap = true;
         // this.container.pivot.y = this.container.height * 0.5 / this.container.scale.y;
     }
 

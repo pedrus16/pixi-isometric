@@ -6,9 +6,11 @@ export class Map extends Entity {
     private _heightMap: number[];
     private _width: number;
     private _height: number;
+    private _elapsed: number;
 
     constructor(width: number, height: number) {
         super(0, 0);
+        this._elapsed = 0;
         this._width = width + 1;
         this._height = height + 1;
 
@@ -21,7 +23,10 @@ export class Map extends Entity {
     get height(): number { return this._height - 1; }
     get heightMap(): number[] { return this._heightMap; }
 
-    update(dt: number) {}
+    update(dt: number) {
+        this._elapsed += dt;
+        this.generateHeightMap(this._elapsed);
+    }
 
     getHeightAt(x: number, y: number): number {
         const minX = Math.floor(x);
@@ -44,7 +49,7 @@ export class Map extends Entity {
         return this._heightMap[y * this._width + x];
     }
 
-    private generateHeightMap(t: number = 0): void {
+    generateHeightMap(t: number = 0): void {
         const rate = 8;
         const rate2 = 8;
         

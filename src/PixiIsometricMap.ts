@@ -85,12 +85,12 @@ export class PixiIsometricMap {
                         const texture = PIXI.utils.TextureCache[this.getTextureAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y)];
                         if (texture) {
                             const sprite = new PIXI.Sprite(texture);
-                            chunk.addChild(sprite);
                             sprite.anchor.x = 0.5;
                             sprite.anchor.y = 1;
                             const isoCoords = toIso(x, y);
                             sprite.x = isoCoords[0];
                             sprite.y = isoCoords[1] - this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
+                            chunk.addChild(sprite);
                         }
                     }
                 }

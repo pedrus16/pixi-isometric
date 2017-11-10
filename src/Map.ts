@@ -16,7 +16,7 @@ export class Map extends Entity {
 
         this._heightMap = [];
         for (let i = 0; i < this._width * this._height; ++i) { this._heightMap.push(0); }
-        this.generateHeightMap();
+        // this.generateHeightMap();
     }
 
     get width(): number { return this._width - 1; }
@@ -50,8 +50,8 @@ export class Map extends Entity {
     }
 
     generateHeightMap(t: number = 0): void {
-        const rate = 4;
-        const rate2 = 8;
+        const rate = 16;
+        const rate2 = 16;
         
         this._heightMap = [];
         for (let i = 0; i < this._width * this._height; ++i) {

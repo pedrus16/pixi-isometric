@@ -49,6 +49,10 @@ export class Map extends Entity {
         return this._heightMap[y * this._width + x];
     }
 
+    setVertexHeight(x: number, y: number, height: number) {
+        this._heightMap[y * this._width + x] = height;
+    }
+
     generateHeightMap(t: number = 0): void {
         const rate = 16;
         const rate2 = 16;
@@ -60,6 +64,21 @@ export class Map extends Entity {
             const z = Math.floor(Math.sin((x + t * 0.25) / rate) * rate) - Math.floor(Math.sin((y + t) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
             this._heightMap.push(z);
         }
+    }
+
+    raiseTile(x: number, y: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        const north = this.getVertexHeight(x, y);
+        const east = this.getVertexHeight(x+1, y);
+        const south = this.getVertexHeight(x+1, y+1);
+        const west = this.getVertexHeight(x, y+1);
+
+        const height = Math.min(north, east, south, west);
+
+        this.setVertexHeight(x, y, height+1);
+        this.setVertexHeight(x+1, y, height+1);
+        this.setVertexHeight(x+1, y+1, height+1);
+        this.setVertexHeight(x, y+1, height+1);
     }
 
 }

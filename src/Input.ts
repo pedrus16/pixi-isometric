@@ -1,11 +1,13 @@
 export enum WHEEL_DIRECTION {
     UP,
     DOWN
-}
+};
 
 export class Input {
 	
     private _mouseDown: boolean;
+    private _mouseLeftDown: boolean;
+    private _mouseRightDown: boolean;
     private _mouseX: number;
     private _mouseY: number;
 
@@ -19,10 +21,27 @@ export class Input {
 
         window.addEventListener('mousedown', (event) => {
             this._mouseDown = true;
+            if (event.button === 0) {
+                this._mouseLeftDown = true;
+            }
+            if (event.button === 2) {
+                this._mouseRightDown = true;
+            }
         });
 
         window.addEventListener('mouseup', (event) => {
             this._mouseDown = false;
+            if (event.button === 0) {
+                this._mouseLeftDown = false;
+            }
+            if (event.button === 2) {
+                this._mouseRightDown = false;
+            }
+        });
+
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            return false;
         });
 
         window.addEventListener('mousemove', (event) => {
@@ -53,6 +72,8 @@ export class Input {
     }
 
     get mouseDown(): boolean { return this._mouseDown; }
+    get mouseLeftDown(): boolean { return this._mouseLeftDown; }
+    get mouseRightDown(): boolean { return this._mouseRightDown; }
     get mouseX(): number { return this._mouseX; }
     get mouseY(): number { return this._mouseY; }
 

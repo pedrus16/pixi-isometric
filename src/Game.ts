@@ -22,9 +22,12 @@ export class Game {
     private graphics: PixiGraphics;
     private input: Input;
     private camera = { x: 0, y: 0 };
+    private mouseReleased = true;
 
     private initialePos = [0, 0];
     private elapsed: number = 0;
+    private map: Map;
+    private isometric: PixiIsometricMap;
 
     constructor() {
         this.input = new Input();
@@ -42,26 +45,26 @@ export class Game {
     }
 
     start() {
-        const map = new Map(256, 256);
+        this.map = new Map(400, 400);
         this.graphics = new PixiGraphics(this.update);
-        const isometric = new PixiIsometricMap(this.graphics, map);
-        this.addEntity(map);
+        this.isometric = new PixiIsometricMap(this.graphics, this.map);
+        this.addEntity(this.map);
     }
 
     update(dt: number): void {
-        if (this.input.mouseDown) {
+        if (this.input.mouseRightDown) {
             if (!this.initialePos){
                 this.initialePos = [
                     this.input.mouseX - this.camera.x, 
                     this.input.mouseY - this.camera.y
                 ];
             }
-            this.camera.x = this.input.mouseX -this.initialePos[0];
+            this.camera.x = this.input.mouseX - this.initialePos[0];
             this.camera.y = this.input.mouseY - this.initialePos[1];
             this.graphics.camera.x = this.camera.x;
             this.graphics.camera.y = this.camera.y;
 
-            console.log(screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y));
+            // console.log(screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y));
             
             // this.graphics.camera.pivot.x = this.graphics.app.screen;
             // + this.graphics.app.screen.width * 0.5
@@ -69,7 +72,19 @@ export class Game {
         else {
             this.initialePos = null;
         }
+        if (this.input.mouseLeftDown) {
+            if (this.mouseReleased) {
+                const pos = screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y);
+                this.map.raiseTile(pos[0], pos[1]);
+                this.isometric.update();
+            }
+            this.mouseReleased = false;
+        }
+        else {
+            this.mouseReleased = true;
+        }
         this.entities.forEach((entity) => entity.update(dt));
+        this.isometric.update();
     }
 
     addEntity(ent: Entity) {

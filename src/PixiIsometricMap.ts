@@ -28,10 +28,10 @@ const TILEMAP = {
     [SLOPE.NORTH|SLOPE.SOUTH]: "tile_13.png",
     [SLOPE.WEST|SLOPE.EAST]: "tile_14.png",
 
-    [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH]: "tile_19.png",
-    [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST]: "tile_20.png",
+    [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH]: "tile_17.png",
+    [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST]: "tile_18.png",
     [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH]: "tile_19.png",
-    [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST]: "tile_18.png",
+    [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST]: "tile_20.png",
 
     [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST|SLOPE.STEEP]: "tile_21.png",
     [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH|SLOPE.STEEP]: "tile_22.png",
@@ -55,6 +55,7 @@ export class PixiIsometricMap {
     private _map: Map;
 
     public container: any;
+    private chunks: { container: any, sprites: any[] }[] = [];
 
     constructor(graphics: PixiGraphics, map: Map) {
         this._graphics = graphics;
@@ -71,12 +72,16 @@ export class PixiIsometricMap {
 
         for (let cy = 0; cy < Math.ceil(chunksY); ++cy) {
             for (let cx = 0; cx < Math.ceil(chunksX); ++cx) {
-                const chunk = new PIXI.Container();
-                this.container.addChild(chunk);
+                const chunk_container = new PIXI.Container();
+                this.container.addChild(chunk_container);
 
-                const isoCoords = toIso(cx, cy, TILE_WIDTH * CHUNK_SIZE);
-                chunk.x = isoCoords[0];
-                chunk.y = isoCoords[1];
+                const isoCoords = toIso(cx, cy, TILE_WIDTH * (CHUNK_SIZE));
+                chunk_container.x = isoCoords[0];
+                chunk_container.y = isoCoords[1];
+
+                const sprites: any[] = [];
+                const chunk = { container: chunk_container, sprites: sprites };
+                this.chunks.push(chunk);
 
                 const sizeX = chunksX - cx >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksX - cx);
                 const sizeY = chunksY - cy >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksY - cy);
@@ -85,20 +90,47 @@ export class PixiIsometricMap {
                         const texture = PIXI.utils.TextureCache[this.getTextureAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y)];
                         if (texture) {
                             const sprite = new PIXI.Sprite(texture);
+                            sprites.push(sprite);
                             sprite.anchor.x = 0.5;
                             sprite.anchor.y = 1;
                             const isoCoords = toIso(x, y);
                             sprite.x = isoCoords[0];
                             sprite.y = isoCoords[1] - this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
-                            chunk.addChild(sprite);
+                            chunk_container.addChild(sprite);
                         }
                     }
                 }
-                chunk.cacheAsBitmap = true;
+                // chunk_container.cacheAsBitmap = true;
             }
         }
         this._graphics.camera.addChild(this.container);
         // this.container.pivot.y = this.container.height * 0.5 / this.container.scale.y;
+    }
+
+    update() {
+        const chunksX = this._map.width / CHUNK_SIZE;
+        const chunksY = this._map.height / CHUNK_SIZE;
+        this.chunks.forEach((chunk, chunk_index) => {
+            // chunk.container.cacheAsBitmap = false;
+            const cx = chunk_index % Math.ceil(chunksX);
+            const cy = Math.floor(chunk_index / Math.ceil(chunksY));
+            const sizeX = chunksX - cx >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksX - cx);
+            const sizeY = chunksY - cy >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksY - cy);
+            chunk.sprites.forEach((sprite, sprite_index) => {
+                const x = sprite_index % sizeX;
+                const y = Math.floor(sprite_index / sizeX);
+                const texture = PIXI.utils.TextureCache[this.getTextureAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y)];
+                if (texture) {
+                    sprite.texture = PIXI.utils.TextureCache[this.getTextureAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y)];
+                }
+                else {
+                    sprite.texture = PIXI.Texture.EMPTY;
+                }
+                const isoCoords = toIso(x, y);
+                sprite.y = isoCoords[1] - this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
+            });
+            // chunk.container.cacheAsBitmap = true;
+        });
     }
 
     private getTextureAt(x: number, y: number): string {

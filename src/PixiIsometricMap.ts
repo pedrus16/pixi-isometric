@@ -41,11 +41,11 @@ const TILEMAP = {
 
 const TILE_WIDTH = 64;
 const TILE_HEIGHT = 16;
+const CHUNK_SIZE = 64;
 
-
-function toIso(x: number, y: number): [number, number] {
-    const isoX = x * TILE_WIDTH * 0.5 - y * TILE_WIDTH * 0.5;
-    const isoY = y * TILE_WIDTH * 0.25 + x * TILE_WIDTH * 0.25;
+function toIso(x: number, y: number, width = TILE_WIDTH): [number, number] {
+    const isoX = (x * 0.5 - y * 0.5) * width;
+    const isoY = (y * 0.25 + x * 0.25) * width;
     return [isoX, isoY];
 }
 
@@ -62,27 +62,42 @@ export class PixiIsometricMap {
 
         PIXI.loader.add(tilesJSON).load(() => this.initialize());
         this.container =  new PIXI.Container();
-        // this.container.scale.x = 0.5;
-        // this.container.scale.y = 0.5;
     }
 
     private initialize() {
-        this._graphics.camera.addChild(this.container);
-        for (let y = 0; y < this._map.height; ++y) {
-            for (let x = 0; x < this._map.width; ++x) {
-                const texture = PIXI.utils.TextureCache[this.getTextureAt(x, y)];
-                if (texture) {
-                    const sprite = new PIXI.Sprite(texture);
-                    sprite.anchor.x = 0.5;
-                    sprite.anchor.y = 1;
-                    const isoCoords = toIso(x, y);
-                    sprite.x = isoCoords[0];
-                    sprite.y = isoCoords[1] - this.getHeightAt(x, y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
-                    this.container.addChild(sprite);
+
+        const chunksX = this._map.width / CHUNK_SIZE;
+        const chunksY = this._map.height / CHUNK_SIZE;
+
+        for (let cy = 0; cy < Math.ceil(chunksY); ++cy) {
+            for (let cx = 0; cx < Math.ceil(chunksX); ++cx) {
+                const chunk = new PIXI.Container();
+                this.container.addChild(chunk);
+
+                const isoCoords = toIso(cx, cy, TILE_WIDTH * CHUNK_SIZE);
+                chunk.x = isoCoords[0];
+                chunk.y = isoCoords[1];
+
+                const sizeX = chunksX - cx >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksX - cx);
+                const sizeY = chunksY - cy >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksY - cy);
+                for (let y = 0; y < sizeY; ++y) {
+                    for (let x = 0; x < sizeX; ++x) {
+                        const texture = PIXI.utils.TextureCache[this.getTextureAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y)];
+                        if (texture) {
+                            const sprite = new PIXI.Sprite(texture);
+                            chunk.addChild(sprite);
+                            sprite.anchor.x = 0.5;
+                            sprite.anchor.y = 1;
+                            const isoCoords = toIso(x, y);
+                            sprite.x = isoCoords[0];
+                            sprite.y = isoCoords[1] - this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
+                        }
+                    }
                 }
+                chunk.cacheAsBitmap = true;
             }
         }
-        // this.container.cacheAsBitmap = true;
+        this._graphics.camera.addChild(this.container);
         // this.container.pivot.y = this.container.height * 0.5 / this.container.scale.y;
     }
 

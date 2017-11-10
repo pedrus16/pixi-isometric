@@ -25,7 +25,7 @@ export class Map extends Entity {
 
     update(dt: number) {
         this._elapsed += dt;
-        this.generateHeightMap(this._elapsed);
+        // this.generateHeightMap(this._elapsed);
     }
 
     getHeightAt(x: number, y: number): number {
@@ -50,14 +50,14 @@ export class Map extends Entity {
     }
 
     generateHeightMap(t: number = 0): void {
-        const rate = 8;
+        const rate = 4;
         const rate2 = 8;
         
         this._heightMap = [];
         for (let i = 0; i < this._width * this._height; ++i) {
             const x = i % this._width;
             const y = Math.floor(i / this._width);
-            const z = Math.floor(Math.sin((x + t * 0.5) / rate) * rate) - Math.floor(Math.sin((y + t) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
+            const z = Math.floor(Math.sin((x + t * 0.25) / rate) * rate) - Math.floor(Math.sin((y + t) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
             this._heightMap.push(z);
         }
     }

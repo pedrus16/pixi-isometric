@@ -73,16 +73,20 @@ export class Game {
             this.initialePos = null;
         }
         if (this.input.mouseLeftDown) {
-            if (this.mouseReleased) {
-                const pos = screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y);
-                if (this.input.isKeyDown('Control')) {
-                    this.map.lowerTile(pos[0], pos[1]);
-                }
-                else {
-                    this.map.raiseTile(pos[0], pos[1]);
-                }
+            const pos = screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y);
+            // if (this.input.isKeyDown('Shift')) {
+                this.map.setTileHeight(pos[0], pos[1], 6);
                 this.isometric.update();
-            }
+            // }
+            // if (this.mouseReleased) {
+            //     if (this.input.isKeyDown('Control')) {
+            //         this.map.lowerTile(pos[0], pos[1]);
+            //     }
+            //     else {
+            //         this.map.raiseTile(pos[0], pos[1]);
+            //     }
+            //     this.isometric.update();
+            // }
             this.mouseReleased = false;
         }
         else {

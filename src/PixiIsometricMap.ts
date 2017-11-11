@@ -2,6 +2,7 @@ import { Map } from './Map';
 import { PixiGraphics } from './PixiGraphics';
 
 import tilesJSON from './tiles.json';
+import cliff from './cliff.png';
 
 enum SLOPE {
     FLAT = 0b00000,
@@ -10,6 +11,7 @@ enum SLOPE {
     SOUTH = 0b00010,
     WEST = 0b00001,
     STEEP = 0b10000,
+    CLIFF = 0b11000,
 };
 
 const TILEMAP = {
@@ -37,6 +39,8 @@ const TILEMAP = {
     [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH|SLOPE.STEEP]: "tile_22.png",
     [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST|SLOPE.STEEP]: "tile_23.png",
     [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH|SLOPE.STEEP]: "tile_24.png",
+
+    [SLOPE.CLIFF]: cliff
 };
 
 const TILE_WIDTH = 64;
@@ -61,7 +65,7 @@ export class PixiIsometricMap {
         this._graphics = graphics;
         this._map = map;
 
-        PIXI.loader.add(tilesJSON).load(() => this.initialize());
+        PIXI.loader.add([tilesJSON, cliff]).load(() => this.initialize());
         this.container =  new PIXI.Container();
     }
 
@@ -140,11 +144,16 @@ export class PixiIsometricMap {
         const height_south = this._map.getVertexHeight(x+1, y+1) - height_min;
         const height_west = this._map.getVertexHeight(x, y+1) - height_min;
 
+        if (height_north + height_east + height_south + height_west >= 6) { 
+            // console.log(height_north + height_east + height_south + height_west);
+            return TILEMAP[SLOPE.CLIFF]; 
+        }
+
         const slope_north = height_north > 0 ? SLOPE.NORTH : 0;
         const slope_east = height_east > 0 ? SLOPE.EAST : 0;
         const slope_south = height_south > 0 ? SLOPE.SOUTH : 0;
         const slope_west = height_west > 0 ? SLOPE.WEST : 0;
-        const slope_steep = height_north + height_east + height_south + height_west >= 4 ? SLOPE.STEEP : 0;
+        const slope_steep = height_north + height_east + height_south + height_west === 4 ? SLOPE.STEEP : 0;
 
         return TILEMAP[slope_north|slope_east|slope_south|slope_west|slope_steep];
     }

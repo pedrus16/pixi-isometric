@@ -67,6 +67,14 @@ export class Map extends Entity {
         }
     }
 
+    setTileHeight(x: number, y: number, height: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        this.setVertexHeight(x, y, height);
+        this.setVertexHeight(x + 1, y, height);
+        this.setVertexHeight(x + 1, y + 1, height);
+        this.setVertexHeight(x, y + 1, height);
+    }
+
     raiseTile(x: number, y: number) {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
         const north = this.getVertexHeight(x, y);

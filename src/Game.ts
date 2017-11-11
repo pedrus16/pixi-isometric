@@ -45,7 +45,7 @@ export class Game {
     }
 
     start() {
-        this.map = new Map(400, 400);
+        this.map = new Map(128, 128);
         this.graphics = new PixiGraphics(this.update);
         this.isometric = new PixiIsometricMap(this.graphics, this.map);
         this.addEntity(this.map);
@@ -75,7 +75,12 @@ export class Game {
         if (this.input.mouseLeftDown) {
             if (this.mouseReleased) {
                 const pos = screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y);
-                this.map.raiseTile(pos[0], pos[1]);
+                if (this.input.isKeyDown('Control')) {
+                    this.map.lowerTile(pos[0], pos[1]);
+                }
+                else {
+                    this.map.raiseTile(pos[0], pos[1]);
+                }
                 this.isometric.update();
             }
             this.mouseReleased = false;
@@ -84,7 +89,7 @@ export class Game {
             this.mouseReleased = true;
         }
         this.entities.forEach((entity) => entity.update(dt));
-        this.isometric.update();
+        // this.isometric.update();
     }
 
     addEntity(ent: Entity) {

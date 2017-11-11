@@ -46,6 +46,7 @@ export class Map extends Entity {
     }
 
     getVertexHeight(x: number, y: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return 0; }
         return this._heightMap[y * this._width + x];
     }
 
@@ -69,16 +70,95 @@ export class Map extends Entity {
     raiseTile(x: number, y: number) {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
         const north = this.getVertexHeight(x, y);
-        const east = this.getVertexHeight(x+1, y);
-        const south = this.getVertexHeight(x+1, y+1);
-        const west = this.getVertexHeight(x, y+1);
+        const east = this.getVertexHeight(x + 1, y);
+        const south = this.getVertexHeight(x + 1, y + 1);
+        const west = this.getVertexHeight(x, y + 1);
 
         const height = Math.min(north, east, south, west);
 
-        this.setVertexHeight(x, y, height+1);
-        this.setVertexHeight(x+1, y, height+1);
-        this.setVertexHeight(x+1, y+1, height+1);
-        this.setVertexHeight(x, y+1, height+1);
+        if (north <= height) {
+            this.incrementVertexHeight(x, y);
+        }
+        if (east <= height) {
+            this.incrementVertexHeight(x + 1, y);
+        }
+        if (south <= height) {
+            this.incrementVertexHeight(x + 1, y + 1);
+        }
+        if (west <= height) {
+            this.incrementVertexHeight(x, y + 1);
+        }
+    }
+
+    lowerTile(x: number, y: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        const north = this.getVertexHeight(x, y);
+        const east = this.getVertexHeight(x + 1, y);
+        const south = this.getVertexHeight(x + 1, y + 1);
+        const west = this.getVertexHeight(x, y + 1);
+
+        const height = Math.max(north, east, south, west);
+
+        if (north >= height) {
+            this.decrementVertexHeight(x, y);
+        }
+        if (east >= height) {
+            this.decrementVertexHeight(x + 1, y);
+        }
+        if (south >= height) {
+            this.decrementVertexHeight(x + 1, y + 1);
+        }
+        if (west >= height) {
+            this.decrementVertexHeight(x, y + 1);
+        }
+    }
+
+    incrementVertexHeight(x: number, y: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+
+        const center = this.getVertexHeight(x, y);
+        const north = this.getVertexHeight(x, y - 1);
+        const east = this.getVertexHeight(x + 1, y);
+        const south = this.getVertexHeight(x, y + 1);
+        const west = this.getVertexHeight(x - 1, y);
+
+        this.setVertexHeight(x, y, center + 1);
+        if (center - north > 0) {
+            this.incrementVertexHeight(x, y - 1);
+        }
+        if (center - east > 0) {
+            this.incrementVertexHeight(x + 1, y);
+        }
+        if (center - south > 0) {
+            this.incrementVertexHeight(x, y + 1);
+        }
+        if (center - west > 0) {
+            this.incrementVertexHeight(x - 1, y);
+        }
+    }
+
+    decrementVertexHeight(x: number, y: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+
+        const center = this.getVertexHeight(x, y);
+        const north = this.getVertexHeight(x, y - 1);
+        const east = this.getVertexHeight(x + 1, y);
+        const south = this.getVertexHeight(x, y + 1);
+        const west = this.getVertexHeight(x - 1, y);
+
+        this.setVertexHeight(x, y, center - 1);
+        if (center - north < 0) {
+            this.decrementVertexHeight(x, y - 1);
+        }
+        if (center - east < 0) {
+            this.decrementVertexHeight(x + 1, y);
+        }
+        if (center - south < 0) {
+            this.decrementVertexHeight(x, y + 1);
+        }
+        if (center - west < 0) {
+            this.decrementVertexHeight(x - 1, y);
+        }
     }
 
 }

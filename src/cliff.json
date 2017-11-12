@@ -1,0 +1,124 @@
+{"frames": {
+
+"cliff_east.png":
+{
+	"frame": {"x":0,"y":0,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_east_south_north.png":
+{
+	"frame": {"x":0,"y":128,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_north.png":
+{
+	"frame": {"x":0,"y":256,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_north_east.png":
+{
+	"frame": {"x":0,"y":384,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_north_east_west.png":
+{
+	"frame": {"x":0,"y":512,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_north_south.png":
+{
+	"frame": {"x":0,"y":640,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_north_west.png":
+{
+	"frame": {"x":0,"y":768,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_south.png":
+{
+	"frame": {"x":0,"y":896,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_south_east.png":
+{
+	"frame": {"x":0,"y":1024,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_south_west.png":
+{
+	"frame": {"x":0,"y":1152,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_south_west_east.png":
+{
+	"frame": {"x":0,"y":1280,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_west.png":
+{
+	"frame": {"x":0,"y":1408,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_west_east.png":
+{
+	"frame": {"x":0,"y":1536,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+},
+"cliff_west_north_south.png":
+{
+	"frame": {"x":0,"y":1664,"w":64,"h":128},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":128},
+	"sourceSize": {"w":64,"h":128}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "[[./cliff.png]]",
+	"format": "RGBA8888",
+	"size": {"w":64,"h":1792},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:caef02bd079afd70667e5d2ea63471cf:53f3b9c834b28e4d4fd7b01c7aabab5d:e5b27000388db3a3b178380aa644f740$"
+}
+}

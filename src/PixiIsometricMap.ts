@@ -2,16 +2,16 @@ import { Map } from './Map';
 import { PixiGraphics } from './PixiGraphics';
 
 import tilesJSON from './tiles.json';
-import cliff from './cliff.png';
+import cliffJSON from './cliff.json';
 
 enum SLOPE {
-    FLAT = 0b00000,
-    NORTH = 0b01000,
-    EAST = 0b00100,
-    SOUTH = 0b00010,
-    WEST = 0b00001,
-    STEEP = 0b10000,
-    CLIFF = 0b11000,
+    FLAT = 0b000000,
+    NORTH = 0b001000,
+    EAST = 0b000100,
+    SOUTH = 0b000010,
+    WEST = 0b000001,
+    STEEP = 0b010000,
+    CLIFF = 0b100000,
 };
 
 const TILEMAP = {
@@ -40,7 +40,23 @@ const TILEMAP = {
     [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST|SLOPE.STEEP]: "tile_23.png",
     [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH|SLOPE.STEEP]: "tile_24.png",
 
-    [SLOPE.CLIFF]: cliff
+    [SLOPE.CLIFF|SLOPE.NORTH]: "cliff_north.png",
+    [SLOPE.CLIFF|SLOPE.EAST]: "cliff_east.png",
+    [SLOPE.CLIFF|SLOPE.SOUTH]: "cliff_south.png",
+    [SLOPE.CLIFF|SLOPE.WEST]: "cliff_west.png",
+
+    [SLOPE.CLIFF|SLOPE.NORTH|SLOPE.EAST]: "cliff_north_east.png",
+    [SLOPE.CLIFF|SLOPE.SOUTH|SLOPE.EAST]: "cliff_south_east.png",
+    [SLOPE.CLIFF|SLOPE.SOUTH|SLOPE.WEST]: "cliff_south_west.png",
+    [SLOPE.CLIFF|SLOPE.NORTH|SLOPE.WEST]: "cliff_north_west.png",
+
+    [SLOPE.CLIFF|SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST]: "cliff_north_east_west.png",
+    [SLOPE.CLIFF|SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH]: "cliff_east_south_north.png",
+    [SLOPE.CLIFF|SLOPE.SOUTH|SLOPE.EAST|SLOPE.WEST]: "cliff_south_west_east.png",
+    [SLOPE.CLIFF|SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH]: "cliff_west_north_south.png",
+
+    [SLOPE.CLIFF|SLOPE.NORTH|SLOPE.SOUTH]: "cliff_north_south.png",
+    [SLOPE.CLIFF|SLOPE.WEST|SLOPE.EAST]: "cliff_west_east.png",
 };
 
 const TILE_WIDTH = 64;
@@ -65,7 +81,7 @@ export class PixiIsometricMap {
         this._graphics = graphics;
         this._map = map;
 
-        PIXI.loader.add([tilesJSON, cliff]).load(() => this.initialize());
+        PIXI.loader.add([tilesJSON, cliffJSON]).load(() => this.initialize());
         this.container =  new PIXI.Container();
     }
 
@@ -144,16 +160,17 @@ export class PixiIsometricMap {
         const height_south = this._map.getVertexHeight(x+1, y+1) - height_min;
         const height_west = this._map.getVertexHeight(x, y+1) - height_min;
 
-        if (height_north + height_east + height_south + height_west >= 6) { 
-            // console.log(height_north + height_east + height_south + height_west);
-            return TILEMAP[SLOPE.CLIFF]; 
-        }
 
         const slope_north = height_north > 0 ? SLOPE.NORTH : 0;
         const slope_east = height_east > 0 ? SLOPE.EAST : 0;
         const slope_south = height_south > 0 ? SLOPE.SOUTH : 0;
         const slope_west = height_west > 0 ? SLOPE.WEST : 0;
         const slope_steep = height_north + height_east + height_south + height_west === 4 ? SLOPE.STEEP : 0;
+
+        if (height_north + height_east + height_south + height_west >= 6) { 
+            // console.log(height_north + height_east + height_south + height_west);
+            return TILEMAP[SLOPE.CLIFF|slope_north|slope_east|slope_south|slope_west]; 
+        }
 
         return TILEMAP[slope_north|slope_east|slope_south|slope_west|slope_steep];
     }

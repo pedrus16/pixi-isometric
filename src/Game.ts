@@ -28,6 +28,7 @@ export class Game {
     private elapsed: number = 0;
     private map: Map;
     private isometric: PixiIsometricMap;
+    private cliffStep: number = 0;
 
     constructor() {
         this.input = new Input();
@@ -74,19 +75,27 @@ export class Game {
         }
         if (this.input.mouseLeftDown) {
             const pos = screenToTile(this.input.mouseX - this.camera.x, this.input.mouseY - this.camera.y);
-            // if (this.input.isKeyDown('Shift')) {
-                this.map.setTileHeight(pos[0], pos[1], 6);
+            if (this.input.isKeyDown('Shift')) {
+                if (this.mouseReleased) {
+                    const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
+                    console.log(height);
+                    this.cliffStep = Math.floor(height) / 6 + 1;
+                    console.log(this.cliffStep);
+                }
+                this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
                 this.isometric.update();
-            // }
-            // if (this.mouseReleased) {
-            //     if (this.input.isKeyDown('Control')) {
-            //         this.map.lowerTile(pos[0], pos[1]);
-            //     }
-            //     else {
-            //         this.map.raiseTile(pos[0], pos[1]);
-            //     }
-            //     this.isometric.update();
-            // }
+            }
+            else {
+                if (this.mouseReleased) {
+                    if (this.input.isKeyDown('Control')) {
+                        this.map.lowerTile(pos[0], pos[1]);
+                    }
+                    else {
+                        this.map.raiseTile(pos[0], pos[1]);
+                    }
+                    this.isometric.update();
+                }
+            }
             this.mouseReleased = false;
         }
         else {

@@ -121,7 +121,7 @@ export class Map extends Entity {
         }
     }
 
-    incrementVertexHeight(x: number, y: number) {
+    private incrementVertexHeight(x: number, y: number) {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
 
         const center = this.getVertexHeight(x, y);
@@ -145,7 +145,7 @@ export class Map extends Entity {
         }
     }
 
-    decrementVertexHeight(x: number, y: number) {
+    private decrementVertexHeight(x: number, y: number) {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
 
         const center = this.getVertexHeight(x, y);
@@ -167,6 +167,10 @@ export class Map extends Entity {
         if (center - west < 0) {
             this.decrementVertexHeight(x - 1, y);
         }
+    }
+
+    setCliffHeight(x: number, y: number, step = 0) {
+        this.setTileHeight(x, y, 6 * step);
     }
 
 }

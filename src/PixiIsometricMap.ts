@@ -165,14 +165,15 @@ export class PixiIsometricMap {
         const slope_east = height_east > 0 ? SLOPE.EAST : 0;
         const slope_south = height_south > 0 ? SLOPE.SOUTH : 0;
         const slope_west = height_west > 0 ? SLOPE.WEST : 0;
-        const slope_steep = height_north + height_east + height_south + height_west === 4 ? SLOPE.STEEP : 0;
+        const slope_steep = height_north === 2 || height_east === 2 || height_south === 2 || height_west === 2 ? SLOPE.STEEP : 0;
+        const cliff = height_north === 6 || height_east === 6 || height_south === 6 || height_west === 6 ? SLOPE.CLIFF : 0;
 
-        if (height_north + height_east + height_south + height_west >= 6) { 
-            // console.log(height_north + height_east + height_south + height_west);
-            return TILEMAP[SLOPE.CLIFF|slope_north|slope_east|slope_south|slope_west]; 
-        }
+        // if (height_north + height_east + height_south + height_west >= 6) { 
+        //     // console.log(height_north + height_east + height_south + height_west);
+        //     return TILEMAP[SLOPE.CLIFF|slope_north|slope_east|slope_south|slope_west]; 
+        // }
 
-        return TILEMAP[slope_north|slope_east|slope_south|slope_west|slope_steep];
+        return TILEMAP[slope_north|slope_east|slope_south|slope_west|slope_steep|cliff];
     }
 
     private getHeightAt(x: number, y: number): number {

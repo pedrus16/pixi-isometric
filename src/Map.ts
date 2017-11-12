@@ -131,16 +131,16 @@ export class Map extends Entity {
         const west = this.getVertexHeight(x - 1, y);
 
         this.setVertexHeight(x, y, center + 1);
-        if (center - north > 0) {
+        if (center - north > 0 && center - north <= 1) {
             this.incrementVertexHeight(x, y - 1);
         }
-        if (center - east > 0) {
+        if (center - east > 0 && center - north <= 1) {
             this.incrementVertexHeight(x + 1, y);
         }
-        if (center - south > 0) {
+        if (center - south > 0 && center - north <= 1) {
             this.incrementVertexHeight(x, y + 1);
         }
-        if (center - west > 0) {
+        if (center - west > 0 && center - north <= 1) {
             this.incrementVertexHeight(x - 1, y);
         }
     }

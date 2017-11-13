@@ -3,9 +3,16 @@ import { Entity } from './Entity';
 
 const CLIFF_HEIGHT = 6;
 
+export enum TILE_TYPE {
+    DIRT,
+    GRASS,
+    WATER,
+};
+
 export class Map extends Entity {
 
     private _heightMap: number[];
+    private _tileMap: TILE_TYPE[];
     private _width: number;
     private _height: number;
     private _elapsed: number;
@@ -18,7 +25,8 @@ export class Map extends Entity {
 
         this._heightMap = [];
         for (let i = 0; i < this._width * this._height; ++i) { this._heightMap.push(0); }
-        // this.generateHeightMap();
+        this._tileMap = [];
+        for (let i = 0; i < width * height; ++i) { this._tileMap.push(TILE_TYPE.GRASS); }
     }
 
     get width(): number { return this._width - 1; }

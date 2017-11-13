@@ -169,23 +169,40 @@ export class Map extends Entity {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
 
         const center = this.getVertexHeight(x, y);
-        const north = this.getVertexHeight(x, y - 1);
-        const east = this.getVertexHeight(x + 1, y);
-        const south = this.getVertexHeight(x, y + 1);
-        const west = this.getVertexHeight(x - 1, y);
+        let north = this.getVertexHeight(x, y - 1);
+        let east = this.getVertexHeight(x + 1, y);
+        let south = this.getVertexHeight(x, y + 1);
+        let west = this.getVertexHeight(x - 1, y);
 
-        this.setVertexHeight(x, y, center - 1);
-        if (center - north < 0) {
+        if (center - north === -1) {
             this.decrementVertexHeight(x, y - 1);
         }
-        if (center - east < 0) {
+        if (center - east === -1) {
             this.decrementVertexHeight(x + 1, y);
         }
-        if (center - south < 0) {
+        if (center - south === -1) {
             this.decrementVertexHeight(x, y + 1);
         }
-        if (center - west < 0) {
+        if (center - west === -1) {
             this.decrementVertexHeight(x - 1, y);
+        }
+        north = this.getVertexHeight(x, y - 1);
+        east = this.getVertexHeight(x + 1, y);
+        south = this.getVertexHeight(x, y + 1);
+        west = this.getVertexHeight(x - 1, y);
+        const north_east = this.getVertexHeight(x + 1, y - 1);
+        const north_west = this.getVertexHeight(x - 1, y - 1);
+        const south_east = this.getVertexHeight(x + 1, y + 1);
+        const south_west = this.getVertexHeight(x - 1, y + 1);
+        if (center - north >= 0 && center - north <= 1 &&
+            center - east >= 0 && center - east <= 1 &&
+            center - south >= 0 && center - south <= 1 &&
+            center - west >= 0 && center - west <= 1 &&
+            center - north_east >= -1 && center - north_east <= 2 &&
+            center - north_west >= -1 && center - north_west <= 2 &&
+            center - south_east >= -1 && center - south_east <= 2 &&
+            center - south_west >= -1 && center - south_west <= 2) {
+            this.setVertexHeight(x, y, center - 1);
         }
     }
 

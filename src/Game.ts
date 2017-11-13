@@ -86,7 +86,7 @@ export class Game {
                 this.isometric.update();
             }
             else {
-                // if (this.mouseReleased) {
+                if (this.mouseReleased) {
                     if (this.input.isKeyDown('Control')) {
                         this.map.lowerTile(pos[0], pos[1]);
                     }
@@ -94,7 +94,7 @@ export class Game {
                         this.map.raiseTile(pos[0], pos[1]);
                     }
                     this.isometric.update();
-                // }
+                }
             }
             this.mouseReleased = false;
         }

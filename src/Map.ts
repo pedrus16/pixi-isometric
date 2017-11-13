@@ -1,6 +1,8 @@
 import { Entity } from './Entity';
 
 
+const CLIFF_HEIGHT = 6;
+
 export class Map extends Entity {
 
     private _heightMap: number[];
@@ -121,7 +123,7 @@ export class Map extends Entity {
         }
     }
 
-    private incrementVertexHeight(x: number, y: number) {
+    private incrementVertexHeight(x: number, y: number): boolean {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
 
         const center = this.getVertexHeight(x, y);
@@ -169,8 +171,17 @@ export class Map extends Entity {
         }
     }
 
-    setCliffHeight(x: number, y: number, step = 0) {
-        this.setTileHeight(x, y, 6 * step);
+    setCliffHeight(tileX: number, tileY: number, step = 0) {
+        const baseHeight = this.getVertexHeight(tileX, tileY);
+        if (baseHeight % CLIFF_HEIGHT) { return; }
+        for (let y = tileY - 1; y < tileY + 3; ++y) {
+            for (let x = tileX - 1; x < tileX + 3; ++x) {
+                if (this.getVertexHeight(x, y) !== step * CLIFF_HEIGHT && this.getVertexHeight(x, y) !== (step - 1) * CLIFF_HEIGHT) {
+                    return;
+                }
+            }
+        }
+        this.setTileHeight(tileX, tileY, CLIFF_HEIGHT * step);
     }
 
 }

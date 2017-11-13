@@ -55,34 +55,18 @@ export class Map extends Entity {
         return result;
     }
 
-    getVertexHeight(x: number, y: number) {
+    getTileAt(x: number, y: number): TILE_TYPE {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return 0; }
+        return this._tileMap[y * this._width + x];
+    }
+
+    getVertexHeight(x: number, y: number) {
+        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return 0; }
         return this._heightMap[y * this._width + x];
     }
 
     setVertexHeight(x: number, y: number, height: number) {
         this._heightMap[y * this._width + x] = height;
-    }
-
-    generateHeightMap(t: number = 0): void {
-        const rate = 16;
-        const rate2 = 16;
-        
-        this._heightMap = [];
-        for (let i = 0; i < this._width * this._height; ++i) {
-            const x = i % this._width;
-            const y = Math.floor(i / this._width);
-            const z = Math.floor(Math.sin((x + t * 0.25) / rate) * rate) - Math.floor(Math.sin((y + t) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
-            this._heightMap.push(z);
-        }
-    }
-
-    setTileHeight(x: number, y: number, height: number) {
-        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
-        this.setVertexHeight(x, y, height);
-        this.setVertexHeight(x + 1, y, height);
-        this.setVertexHeight(x + 1, y + 1, height);
-        this.setVertexHeight(x, y + 1, height);
     }
 
     raiseTile(x: number, y: number) {
@@ -129,6 +113,40 @@ export class Map extends Entity {
         if (west >= height) {
             this.decrementVertexHeight(x, y + 1);
         }
+    }
+
+    setCliffHeight(tileX: number, tileY: number, step = 0) {
+        const baseHeight = this.getVertexHeight(tileX, tileY);
+        if (baseHeight % CLIFF_HEIGHT) { return; }
+        for (let y = tileY - 1; y < tileY + 3; ++y) {
+            for (let x = tileX - 1; x < tileX + 3; ++x) {
+                if (this.getVertexHeight(x, y) !== step * CLIFF_HEIGHT && this.getVertexHeight(x, y) !== (step - 1) * CLIFF_HEIGHT) {
+                    return;
+                }
+            }
+        }
+        this.setTileHeight(tileX, tileY, CLIFF_HEIGHT * step);
+    }
+
+    private generateHeightMap(t: number = 0): void {
+        const rate = 16;
+        const rate2 = 16;
+        
+        this._heightMap = [];
+        for (let i = 0; i < this._width * this._height; ++i) {
+            const x = i % this._width;
+            const y = Math.floor(i / this._width);
+            const z = Math.floor(Math.sin((x + t * 0.25) / rate) * rate) - Math.floor(Math.sin((y + t) / rate2) * rate2);// - Math.floor(Math.sin((x + t1 * 0.5) / 16));
+            this._heightMap.push(z);
+        }
+    }
+
+    private setTileHeight(x: number, y: number, height: number) {
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        this.setVertexHeight(x, y, height);
+        this.setVertexHeight(x + 1, y, height);
+        this.setVertexHeight(x + 1, y + 1, height);
+        this.setVertexHeight(x, y + 1, height);
     }
 
     private incrementVertexHeight(x: number, y: number): boolean {
@@ -212,19 +230,6 @@ export class Map extends Entity {
             center - south_west >= -1 && center - south_west <= 2) {
             this.setVertexHeight(x, y, center - 1);
         }
-    }
-
-    setCliffHeight(tileX: number, tileY: number, step = 0) {
-        const baseHeight = this.getVertexHeight(tileX, tileY);
-        if (baseHeight % CLIFF_HEIGHT) { return; }
-        for (let y = tileY - 1; y < tileY + 3; ++y) {
-            for (let x = tileX - 1; x < tileX + 3; ++x) {
-                if (this.getVertexHeight(x, y) !== step * CLIFF_HEIGHT && this.getVertexHeight(x, y) !== (step - 1) * CLIFF_HEIGHT) {
-                    return;
-                }
-            }
-        }
-        this.setTileHeight(tileX, tileY, CLIFF_HEIGHT * step);
     }
 
 }

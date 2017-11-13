@@ -1,4 +1,4 @@
-import { Map } from './Map';
+import { Map, CLIFF_HEIGHT } from './Map';
 import { PixiGraphics } from './PixiGraphics';
 
 import tilesJSON from './tiles.json';
@@ -166,9 +166,9 @@ export class PixiIsometricMap {
         const slope_south = height_south > 0 ? SLOPE.SOUTH : 0;
         const slope_west = height_west > 0 ? SLOPE.WEST : 0;
         const slope_steep = height_north === 2 || height_east === 2 || height_south === 2 || height_west === 2 ? SLOPE.STEEP : 0;
-        const cliff = height_north === 6 || height_east === 6 || height_south === 6 || height_west === 6 ? SLOPE.CLIFF : 0;
+        const cliff = height_north === CLIFF_HEIGHT || height_east === CLIFF_HEIGHT || height_south === CLIFF_HEIGHT || height_west === CLIFF_HEIGHT ? SLOPE.CLIFF : 0;
 
-        // if (height_north + height_east + height_south + height_west >= 6) { 
+        // if (height_north + height_east + height_south + height_west >= CLIFF_HEIGHT) { 
         //     // console.log(height_north + height_east + height_south + height_west);
         //     return TILEMAP[SLOPE.CLIFF|slope_north|slope_east|slope_south|slope_west]; 
         // }

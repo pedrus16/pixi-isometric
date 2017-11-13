@@ -1,7 +1,7 @@
 import { Entity } from './Entity';
 
 
-const CLIFF_HEIGHT = 6;
+export const CLIFF_HEIGHT = 3;
 
 export enum TILE_TYPE {
     DIRT,

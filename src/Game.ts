@@ -78,9 +78,7 @@ export class Game {
             if (this.input.isKeyDown('Shift')) {
                 if (this.mouseReleased) {
                     const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
-                    console.log(height);
                     this.cliffStep = Math.floor(height) / 6 + 1;
-                    console.log(this.cliffStep);
                 }
                 this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
                 this.isometric.update();

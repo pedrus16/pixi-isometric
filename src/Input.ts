@@ -85,4 +85,8 @@ export class Input {
         return this._keys[key] || false;
     }
 
+    update(dt: number) {
+        
+    }
+
 }

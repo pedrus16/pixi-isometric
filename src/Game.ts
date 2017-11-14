@@ -8,18 +8,15 @@ import { Camera } from './Camera';
 
 export class Game {
 
+    private camera: Camera;
+    private cliffStep: number = 0;
+    private elapsed: number = 0;
     private entities: Entity[] = [];
     private graphics: PixiGraphics;
     private input: Input;
-    private camera: Camera;
-    // private camera = { x: 0, y: 0 };
-    private mouseReleased = true;
-
-    // private initialePos = [0, 0];
-    private elapsed: number = 0;
-    private map: Map;
     private isometric: PixiIsometricMap;
-    private cliffStep: number = 0;
+    private map: Map;
+    private mouseReleased = true;
 
     constructor() {
         this.input = new Input();
@@ -36,6 +33,7 @@ export class Game {
     }
 
     update(dt: number): void {
+        this.input.update(dt);
         if (this.input.mouseLeftDown) {
             const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
             if (this.input.isKeyDown('Shift')) {

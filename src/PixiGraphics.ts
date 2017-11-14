@@ -11,8 +11,8 @@ export class PixiGraphics {
         PIXI.utils.sayHello(type);
 
         this.app = new PIXI.Application({
-            width: window.innerWidth,
-            height: window.innerHeight
+            width: 1024,
+            height: 768
         });
         this.app.renderer.autoResize = true;
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
@@ -22,13 +22,11 @@ export class PixiGraphics {
             updateCallback(this.app.ticker.deltaTime);
         });
         this.camera = new PIXI.Container();
-        // this.camera.pivot.x = -this.app.screen.width * 0.5;
-        // this.camera.pivot.y = -this.app.screen.height * 0.5;
         this.app.stage.addChild(this.camera);
 
-        window.addEventListener('resize', (event) => {
-            this.app.renderer.resize(window.innerWidth, window.innerHeight);
-        });
+        // window.addEventListener('resize', (event) => {
+        //     this.app.renderer.resize(window.innerWidth, window.innerHeight);
+        // });
     }
 
 }

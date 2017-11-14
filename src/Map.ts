@@ -63,7 +63,8 @@ export class Map extends Entity {
     }
 
     getVertexHeight(x: number, y: number) {
-        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return 0; }
+        x = Math.max(0, Math.min(x, this._width - 1));
+        y = Math.max(0, Math.min(y, this._height - 1));
         return this._heightMap[y * this._width + x];
     }
 
@@ -152,7 +153,7 @@ export class Map extends Entity {
     }
 
     private incrementVertexHeight(x: number, y: number): boolean {
-        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
 
         const center = this.getVertexHeight(x, y);
         let north = this.getVertexHeight(x, y - 1);
@@ -194,7 +195,7 @@ export class Map extends Entity {
     }
 
     private decrementVertexHeight(x: number, y: number) {
-        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
 
         const center = this.getVertexHeight(x, y);
         let north = this.getVertexHeight(x, y - 1);

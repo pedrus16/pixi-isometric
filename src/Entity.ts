@@ -1,4 +1,4 @@
-export class Entity {
+export abstract class Entity {
 
     protected _id: number;
     protected _x: number;
@@ -9,12 +9,15 @@ export class Entity {
         this._y = y;
     }
 
-    initialize() {}
+    abstract initialize(): void;
 
-    update(dt: number): void {}
+    abstract update(dt: number): void;
 
     set id(id: number) { this._id = id; }
     get id(): number { return this._id; }
+
+    get x(): number { return this._x; }
+    get y(): number { return this._y; }
 
 }
 

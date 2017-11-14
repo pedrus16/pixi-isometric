@@ -33,6 +33,8 @@ export class Map extends Entity {
     get height(): number { return this._height - 1; }
     get heightMap(): number[] { return this._heightMap; }
 
+    initialize() {}
+
     update(dt: number) {
         this._elapsed += dt;
         // this.generateHeightMap(this._elapsed);

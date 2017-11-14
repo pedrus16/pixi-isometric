@@ -19,6 +19,8 @@ export class Game {
     private map: Map;
     private mouseReleased = true;
 
+    private paintMode: 'hill' | 'cliff' = 'cliff';
+
     constructor() {
         this.input = new Input();
         this.update = this.update.bind(this);
@@ -38,15 +40,7 @@ export class Game {
         this.input.update(dt);
         if (this.input.mouseLeftDown) {
             const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
-            if (this.input.isKeyDown('Shift')) {
-                if (this.mouseReleased) {
-                    const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
-                    this.cliffStep = Math.floor(height) / 6 + 1;
-                }
-                this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
-                this.isometric.update();
-            }
-            else {
+            if (this.paintMode === 'hill') {
                 if (this.mouseReleased) {
                     if (this.input.isKeyDown('Control')) {
                         this.map.lowerTile(pos[0], pos[1]);
@@ -57,6 +51,38 @@ export class Game {
                     this.isometric.update();
                 }
             }
+            else {
+                if (this.mouseReleased) {
+                    const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
+                    if (this.input.isKeyDown('Control')) {
+                        this.cliffStep = Math.floor(height) / 6 - 1;
+                    }
+                    else {
+                        this.cliffStep = Math.floor(height) / 6 + 1;
+                    }
+                }
+                this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
+                this.isometric.update();
+            }
+            // if (this.input.isKeyDown('Shift')) {
+            //     if (this.mouseReleased) {
+            //         const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
+            //         this.cliffStep = Math.floor(height) / 6 + 1;
+            //     }
+            //     this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
+            //     this.isometric.update();
+            // }
+            // else {
+            //     if (this.mouseReleased) {
+            //         if (this.input.isKeyDown('Control')) {
+            //             this.map.lowerTile(pos[0], pos[1]);
+            //         }
+            //         else {
+            //             this.map.raiseTile(pos[0], pos[1]);
+            //         }
+            //         this.isometric.update();
+            //     }
+            // }
             this.mouseReleased = false;
         }
         else {

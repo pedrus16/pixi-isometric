@@ -123,7 +123,7 @@ export class Map extends Entity {
         if (baseHeight % CLIFF_HEIGHT) { return; }
         for (let y = tileY - 1; y < tileY + 3; ++y) {
             for (let x = tileX - 1; x < tileX + 3; ++x) {
-                if (this.getVertexHeight(x, y) !== step * CLIFF_HEIGHT && this.getVertexHeight(x, y) !== (step - 1) * CLIFF_HEIGHT) {
+                if (this.getVertexHeight(x, y) !== step * CLIFF_HEIGHT && this.getVertexHeight(x, y) !== (step - 1) * CLIFF_HEIGHT && this.getVertexHeight(x, y) !== (step + 1) * CLIFF_HEIGHT) {
                     return;
                 }
             }

@@ -168,11 +168,6 @@ export class PixiIsometricMap {
         const slope_steep = height_north === 2 || height_east === 2 || height_south === 2 || height_west === 2 ? SLOPE.STEEP : 0;
         const cliff = height_north === CLIFF_HEIGHT || height_east === CLIFF_HEIGHT || height_south === CLIFF_HEIGHT || height_west === CLIFF_HEIGHT ? SLOPE.CLIFF : 0;
 
-        // if (height_north + height_east + height_south + height_west >= CLIFF_HEIGHT) { 
-        //     // console.log(height_north + height_east + height_south + height_west);
-        //     return TILEMAP[SLOPE.CLIFF|slope_north|slope_east|slope_south|slope_west]; 
-        // }
-
         return TILEMAP[slope_north|slope_east|slope_south|slope_west|slope_steep|cliff];
     }
 

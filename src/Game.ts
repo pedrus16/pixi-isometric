@@ -18,8 +18,7 @@ export class Game {
     private isometric: PixiIsometricMap;
     private map: Map;
     private mouseReleased = true;
-
-    private paintMode: 'hill' | 'cliff' = 'cliff';
+    private ui: PixiUI;
 
     constructor() {
         this.input = new Input();
@@ -31,7 +30,7 @@ export class Game {
         this.graphics = new PixiGraphics(this.update);
         this.camera = new Camera(this.graphics, this.input);
         this.isometric = new PixiIsometricMap(this.graphics, this.map);
-        const ui = new PixiUI(this.graphics);
+        this.ui = new PixiUI(this.graphics);
         this.addEntity(this.map);
         this.addEntity(this.camera);
     }
@@ -40,7 +39,7 @@ export class Game {
         this.input.update(dt);
         if (this.input.mouseLeftDown) {
             const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
-            if (this.paintMode === 'hill') {
+            if (this.ui.tool === 'hill') {
                 if (this.mouseReleased) {
                     if (this.input.isKeyDown('Control')) {
                         this.map.lowerTile(pos[0], pos[1]);
@@ -53,7 +52,12 @@ export class Game {
             }
             else {
                 if (this.mouseReleased) {
-                    const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
+                    const height = Math.min(
+                        this.map.getVertexHeight(pos[0], pos[1]),
+                        this.map.getVertexHeight(pos[0] + 1, pos[1]),
+                        this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
+                        this.map.getVertexHeight(pos[0], pos[1] + 1),
+                    );
                     if (this.input.isKeyDown('Control')) {
                         this.cliffStep = Math.floor(height) / 6 - 1;
                     }

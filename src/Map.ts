@@ -118,6 +118,10 @@ export class Map extends Entity {
         }
     }
 
+    levelTile(x: number, y: number, height: number) {
+        
+    }
+
     setCliffHeight(tileX: number, tileY: number, step = 0) {
         const baseHeight = this.getVertexHeight(tileX, tileY);
         if (baseHeight % CLIFF_HEIGHT) { return; }

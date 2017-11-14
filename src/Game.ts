@@ -1,6 +1,7 @@
 import { Entity } from './Entity';
 import { PixiGraphics } from './PixiGraphics';
 import { PixiIsometricMap } from './PixiIsometricMap';
+import { PixiUI } from './PixiUI';
 import { Input, WHEEL_DIRECTION } from './Input';
 import { Map } from './Map';
 import { Camera } from './Camera';
@@ -28,6 +29,7 @@ export class Game {
         this.graphics = new PixiGraphics(this.update);
         this.camera = new Camera(this.graphics, this.input);
         this.isometric = new PixiIsometricMap(this.graphics, this.map);
+        const ui = new PixiUI(this.graphics);
         this.addEntity(this.map);
         this.addEntity(this.camera);
     }

@@ -32,19 +32,20 @@ export class Game {
         this.graphics = new PixiGraphics(this.update);
         this.camera = new Camera(this.graphics, this.input);
         this.isometric = new PixiIsometricMap(this.graphics, this.map);
-        this.ui = new PixiUI(this.graphics);
+        this.ui = new PixiUI(this.graphics, this.input);
         this.addEntity(this.map);
         this.addEntity(this.camera);
     }
 
     update(dt: number): void {
         this.input.update(dt);
+        this.updateCursor();
         if (this.input.mouseLeftDown) {
             const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
             if (this.ui.tool === 'hill') {
                 if (this.input.isKeyDown('Shift')) {
                     if (this.mouseReleased) {
-                        const height = Math.max(
+                        const height = Math.min(
                             this.map.getVertexHeight(pos[0], pos[1]),
                             this.map.getVertexHeight(pos[0] + 1, pos[1]),
                             this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
@@ -114,6 +115,23 @@ export class Game {
         const y = (screenY + this.camera.y) / this.camera.scale;
         const iso = this.screenToIso(x, y);
         return [Math.floor(iso[0]), Math.floor(iso[1])];
+    }
+
+    private toIso(x: number, y: number, width = 64): [number, number] {
+        const isoX = (x * 0.5 - y * 0.5) * width;
+        const isoY = (y * 0.25 + x * 0.25) * width;
+        return [isoX, isoY];
+    }
+
+    private updateCursor() {
+        const tile = this.screenToTile(this.input.mouseX, this.input.mouseY);
+        const cursor = this.toIso(tile[0], tile[1]);
+        const height = this.map.getTileHeight(tile[0], tile[1]);
+        console.log(tile[0], tile[1], height);
+        this.ui.mouseCursor.x = cursor[0] * this.camera.scale - this.camera.x;
+        this.ui.mouseCursor.y = (cursor[1] - height * 16) * this.camera.scale - this.camera.y;
+        this.ui.mouseCursor.scale.x = this.camera.scale;
+        this.ui.mouseCursor.scale.y = this.camera.scale;
     }
 
 }

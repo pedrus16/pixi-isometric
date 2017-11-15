@@ -1,16 +1,22 @@
 import { PixiGraphics } from './PixiGraphics';
+import { Input } from './Input';
 
 import './style.css';
 
 export class PixiUI {
 
     private _graphics: PixiGraphics;
+    private _input: Input;
     private _ui: any;
     private _tool: 'hill' | 'cliff';
+    
+    public mouseCursor: any;
+    public diamond: any;
 
 
-    constructor(graphics: PixiGraphics) {
+    constructor(graphics: PixiGraphics, input: Input) {
         this._graphics = graphics;
+        this._input = input;
         this._ui = new PIXI.Container();
         this._tool = 'hill';
 
@@ -48,6 +54,15 @@ export class PixiUI {
         cliffButton.style.fontWeight = 'normal';
 
         this._graphics.app.stage.addChild(this._ui);
+
+        this.mouseCursor = new PIXI.Graphics();
+        this.mouseCursor.lineStyle(2, 0xFFFFFF, 1);
+        this.diamond = new PIXI.Polygon([0, 0, 32, 16, 0, 32, -32, 16, 0, 0]);
+        this.mouseCursor.drawShape(this.diamond);
+        this._ui.addChild(this.mouseCursor);
+    }
+
+    update(dt: number) {
     }
 
     get tool(): string { return this._tool; }

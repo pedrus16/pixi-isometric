@@ -57,6 +57,15 @@ export class Map extends Entity {
         return result;
     }
 
+    getTileHeight(x: number, y: number): number {
+        const north = this.getVertexHeight(x, y);
+        const east = this.getVertexHeight(x + 1, y);
+        const south = this.getVertexHeight(x + 1, y + 1);
+        const west = this.getVertexHeight(x, y + 1);
+
+        return Math.min(north, east, south, west);
+    } 
+
     getTileAt(x: number, y: number): TILE_TYPE {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return 0; }
         return this._tileMap[y * this._width + x];

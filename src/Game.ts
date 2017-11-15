@@ -11,6 +11,8 @@ export class Game {
 
     private camera: Camera;
     private cliffStep: number = 0;
+    private levelCliff: number = 0;
+    private levelHeight: number = 0;
     private elapsed: number = 0;
     private entities: Entity[] = [];
     private graphics: PixiGraphics;
@@ -40,14 +42,29 @@ export class Game {
         if (this.input.mouseLeftDown) {
             const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
             if (this.ui.tool === 'hill') {
-                if (this.mouseReleased) {
-                    if (this.input.isKeyDown('Control')) {
-                        this.map.lowerTile(pos[0], pos[1]);
+                if (this.input.isKeyDown('Shift')) {
+                    if (this.mouseReleased) {
+                        const height = Math.max(
+                            this.map.getVertexHeight(pos[0], pos[1]),
+                            this.map.getVertexHeight(pos[0] + 1, pos[1]),
+                            this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
+                            this.map.getVertexHeight(pos[0], pos[1] + 1),
+                        );
+                        this.levelHeight = height;
                     }
-                    else {
-                        this.map.raiseTile(pos[0], pos[1]);
-                    }
+                    this.map.levelTile(pos[0], pos[1], this.levelHeight);
                     this.isometric.update();
+                }
+                else {
+                    if (this.mouseReleased) {
+                        if (this.input.isKeyDown('Control')) {
+                            this.map.lowerTile(pos[0], pos[1]);
+                        }
+                        else {
+                            this.map.raiseTile(pos[0], pos[1]);
+                        }
+                        this.isometric.update();
+                    }
                 }
             }
             else {
@@ -61,6 +78,9 @@ export class Game {
                     if (this.input.isKeyDown('Control')) {
                         this.cliffStep = Math.floor(height) / 6 - 1;
                     }
+                    else if (this.input.isKeyDown('Shift')) {
+                        this.cliffStep = Math.floor(height) / 6;
+                    }
                     else {
                         this.cliffStep = Math.floor(height) / 6 + 1;
                     }
@@ -68,25 +88,6 @@ export class Game {
                 this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
                 this.isometric.update();
             }
-            // if (this.input.isKeyDown('Shift')) {
-            //     if (this.mouseReleased) {
-            //         const height = this.map.getHeightAt(pos[0] + 0.5, pos[1] + 0.5);
-            //         this.cliffStep = Math.floor(height) / 6 + 1;
-            //     }
-            //     this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
-            //     this.isometric.update();
-            // }
-            // else {
-            //     if (this.mouseReleased) {
-            //         if (this.input.isKeyDown('Control')) {
-            //             this.map.lowerTile(pos[0], pos[1]);
-            //         }
-            //         else {
-            //             this.map.raiseTile(pos[0], pos[1]);
-            //         }
-            //         this.isometric.update();
-            //     }
-            // }
             this.mouseReleased = false;
         }
         else {

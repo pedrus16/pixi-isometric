@@ -119,7 +119,11 @@ export class Map extends Entity {
     }
 
     levelTile(x: number, y: number, height: number) {
-        
+        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
+        this.setVertexHeightSafe(x, y, height);    
+        this.setVertexHeightSafe(x + 1, y, height);
+        this.setVertexHeightSafe(x + 1, y + 1, height);
+        this.setVertexHeightSafe(x, y + 1, height);
     }
 
     setCliffHeight(tileX: number, tileY: number, step = 0) {
@@ -135,7 +139,64 @@ export class Map extends Entity {
         this.setTileHeight(tileX, tileY, CLIFF_HEIGHT * step);
     }
 
-    private generateHeightMap(t: number = 0): void {
+    private setVertexHeightSafe(x: number, y: number, height: number, step = 1) {
+        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
+        
+        const center = this.getVertexHeight(x, y);
+        let north = this.getVertexHeight(x, y - 1);
+        let east = this.getVertexHeight(x + 1, y);
+        let south = this.getVertexHeight(x, y + 1);
+        let west = this.getVertexHeight(x - 1, y);
+
+        const north_east = this.getVertexHeight(x + 1, y - 1);
+        const north_west = this.getVertexHeight(x - 1, y - 1);
+        const south_east = this.getVertexHeight(x + 1, y + 1);
+        const south_west = this.getVertexHeight(x - 1, y + 1);
+
+        if (center % CLIFF_HEIGHT === 0 && (Math.abs(north - center) ===  CLIFF_HEIGHT || 
+                                            Math.abs(east - center) ===  CLIFF_HEIGHT || 
+                                            Math.abs(south - center) ===  CLIFF_HEIGHT || 
+                                            Math.abs(west - center) ===  CLIFF_HEIGHT ||
+                                            Math.abs(north_east - center) ===  CLIFF_HEIGHT ||
+                                            Math.abs(north_west - center) ===  CLIFF_HEIGHT || 
+                                            Math.abs(south_east - center) ===  CLIFF_HEIGHT || 
+                                            Math.abs(south_west - center) ===  CLIFF_HEIGHT)) {
+            return false;
+        }
+
+        let canChange = true;
+        if (north - height > step) {
+            canChange = canChange && this.setVertexHeightSafe(x, y - 1, height + step);
+        }
+        else if (north - height < -step) {
+            canChange = canChange && this.setVertexHeightSafe(x, y - 1, height - step);
+        }
+        if (east - height > step) {
+            canChange = canChange && this.setVertexHeightSafe(x + 1, y, height + step);
+        }
+        else if (east - height < -step) {
+            canChange = canChange && this.setVertexHeightSafe(x + 1, y, height - step);
+        }
+        if (south - height > step) {
+            canChange = canChange && this.setVertexHeightSafe(x, y + 1, height + step);
+        }
+        else if (south - height < -step) {
+            canChange = canChange && this.setVertexHeightSafe(x, y + 1, height - step);
+        }
+        if (west - height > step) {
+            canChange = canChange && this.setVertexHeightSafe(x - 1, y, height + step);
+        }
+        else if (west - height < -step) {
+            canChange = canChange && this.setVertexHeightSafe(x - 1, y, height - step);
+        }
+        if (canChange) {
+            this.setVertexHeight(x, y, height);
+            return true;
+        }
+        return false;
+    }
+
+    private generateHeightMap(t: number = 0) {
         const rate = 16;
         const rate2 = 16;
         

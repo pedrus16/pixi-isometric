@@ -24,6 +24,8 @@ export class PixiGraphics {
         this.camera = new PIXI.Container();
         this.app.stage.addChild(this.camera);
 
+        
+
         // window.addEventListener('resize', (event) => {
         //     this.app.renderer.resize(window.innerWidth, window.innerHeight);
         // });

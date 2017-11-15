@@ -5,6 +5,11 @@ import { PixiUI } from './PixiUI';
 import { Input, WHEEL_DIRECTION } from './Input';
 import { Map } from './Map';
 import { Camera } from './Camera';
+import { Tree } from './Tree';
+
+import tilesJSON from './tiles.json';
+import cliffJSON from './cliff.json';
+import palmPNG from './palm01.png';
 
 
 export class Game {
@@ -28,13 +33,23 @@ export class Game {
     }
 
     start() {
-        this.map = new Map(32, 32);
-        this.graphics = new PixiGraphics(this.update);
-        this.camera = new Camera(this.graphics, this.input);
-        this.isometric = new PixiIsometricMap(this.graphics, this.map);
-        this.ui = new PixiUI(this.graphics, this.input);
-        this.addEntity(this.map);
-        this.addEntity(this.camera);
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+        PIXI.loader.add([tilesJSON, cliffJSON, palmPNG]).load(() => {
+
+            this.map = new Map(32, 32);
+            this.graphics = new PixiGraphics(this.update);
+            this.camera = new Camera(this.graphics, this.input);
+            this.isometric = new PixiIsometricMap(this.graphics, this.map);
+            this.ui = new PixiUI(this.graphics, this.input);
+            this.addEntity(this.map);
+            this.addEntity(this.camera);
+
+            const tree = new Tree(4, 4);
+            this.graphics.camera.addChild(tree.sprite);
+            console.log(tree.sprite.x, tree.sprite.y);
+            this.addEntity(tree);
+
+        });
     }
 
     update(dt: number): void {
@@ -127,7 +142,6 @@ export class Game {
         const tile = this.screenToTile(this.input.mouseX, this.input.mouseY);
         const cursor = this.toIso(tile[0], tile[1]);
         const height = this.map.getTileHeight(tile[0], tile[1]);
-        console.log(tile[0], tile[1], height);
         this.ui.mouseCursor.x = cursor[0] * this.camera.scale - this.camera.x;
         this.ui.mouseCursor.y = (cursor[1] - height * 16) * this.camera.scale - this.camera.y;
         this.ui.mouseCursor.scale.x = this.camera.scale;

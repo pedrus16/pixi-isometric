@@ -4,6 +4,7 @@ import { PixiGraphics } from './PixiGraphics';
 import tilesJSON from './tiles.json';
 import cliffJSON from './cliff.json';
 
+
 enum SLOPE {
     FLAT = 0b000000,
     NORTH = 0b001000,
@@ -81,8 +82,9 @@ export class PixiIsometricMap {
         this._graphics = graphics;
         this._map = map;
 
-        PIXI.loader.add([tilesJSON, cliffJSON]).load(() => this.initialize());
+        // PIXI.loader.add([tilesJSON, cliffJSON]).load(() => this.initialize());
         this.container =  new PIXI.Container();
+        this.initialize();
     }
 
     private initialize() {

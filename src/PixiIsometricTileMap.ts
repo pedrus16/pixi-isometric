@@ -5,6 +5,12 @@ import tilesJSON from './tiles.json';
 import cliffJSON from './cliff.json';
 
 
+export const TILE_WIDTH = 64;
+export const LAYER_HEIGHT = 16;
+const CHUNK_SIZE = 64;
+
+import { toIso } from './utils';
+
 enum SLOPE {
     FLAT = 0b000000,
     NORTH = 0b001000,
@@ -60,15 +66,6 @@ const TILEMAP = {
     [SLOPE.CLIFF|SLOPE.WEST|SLOPE.EAST]: "cliff_west_east.png",
 };
 
-const TILE_WIDTH = 64;
-const TILE_HEIGHT = 16;
-const CHUNK_SIZE = 64;
-
-function toIso(x: number, y: number, width = TILE_WIDTH): [number, number] {
-    const isoX = (x * 0.5 - y * 0.5) * width;
-    const isoY = (y * 0.25 + x * 0.25) * width;
-    return [isoX, isoY];
-}
 
 export class PixiIsometricTileMap {
 
@@ -97,7 +94,7 @@ export class PixiIsometricTileMap {
                 const chunk_container = new PIXI.Container();
                 this.container.addChild(chunk_container);
 
-                const isoCoords = toIso(cx, cy, TILE_WIDTH * (CHUNK_SIZE));
+                const isoCoords = toIso(cx, cy, 0, TILE_WIDTH * (CHUNK_SIZE));
                 chunk_container.x = isoCoords[0];
                 chunk_container.y = isoCoords[1];
 
@@ -115,9 +112,9 @@ export class PixiIsometricTileMap {
                             sprites.push(sprite);
                             sprite.anchor.x = 0.5;
                             sprite.anchor.y = 1;
-                            const isoCoords = toIso(x, y);
+                            const isoCoords = toIso(x, y, this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y));
                             sprite.x = isoCoords[0];
-                            sprite.y = isoCoords[1] - this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
+                            sprite.y = isoCoords[1] + TILE_WIDTH * 0.5;
                             chunk_container.addChild(sprite);
                         }
                     }
@@ -148,8 +145,8 @@ export class PixiIsometricTileMap {
                 else {
                     sprite.texture = PIXI.Texture.EMPTY;
                 }
-                const isoCoords = toIso(x, y);
-                sprite.y = isoCoords[1] - this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y) * TILE_HEIGHT + TILE_WIDTH * 0.5;
+                const isoCoords = toIso(x, y, this.getHeightAt(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y));
+                sprite.y = isoCoords[1] + TILE_WIDTH * 0.5;
             });
             // chunk.container.cacheAsBitmap = true;
         });

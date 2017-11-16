@@ -21,6 +21,7 @@ export class Game {
     private levelHeight: number = 0;
     private elapsed: number = 0;
     private mouseReleased = true;
+    private tree: Tree;
 
     constructor() {
         this.input = new Input();
@@ -42,9 +43,9 @@ export class Game {
         this.tileMap = new PixiIsometricTileMap(this.graphics, this.map);
         this.ui = new PixiUI(this.graphics, this.input);
 
-        const tree = new Tree(4.5, 4.5, 1);
-        this.graphics.camera.addChild(tree.sprite);
-        this.addEntity(tree);
+        this.tree = new Tree(4.5, 4.5, this.map.getHeightAt(4.5, 4.5));
+        this.graphics.camera.addChild(this.tree.sprite);
+        this.addEntity(this.tree);
     }
 
     update(dt: number): void {
@@ -104,7 +105,7 @@ export class Game {
                         this.levelHeight = height;
                     }
                     this.map.levelTile(pos[0], pos[1], this.levelHeight);
-                    this.tileMap.update();
+                    this.updateVisuals();
                 }
                 else {
                     if (this.mouseReleased) {
@@ -114,7 +115,7 @@ export class Game {
                         else {
                             this.map.raiseTile(pos[0], pos[1]);
                         }
-                        this.tileMap.update();
+                        this.updateVisuals();
                     }
                 }
             }
@@ -137,13 +138,18 @@ export class Game {
                     }
                 }
                 this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
-                this.tileMap.update();
+                this.updateVisuals();
             }
             this.mouseReleased = false;
         }
         else {
             this.mouseReleased = true;
         }
+    }
+
+    updateVisuals() {
+        this.tileMap.update();
+        this.tree.z = this.map.getHeightAt(4.5, 4.5);
     }
 
 }

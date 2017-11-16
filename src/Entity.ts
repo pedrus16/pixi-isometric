@@ -3,10 +3,12 @@ export abstract class Entity {
     protected _id: number;
     protected _x: number;
     protected _y: number;
+    protected _z: number;
 
-    constructor(x: number = 0, y: number = 0) {
+    constructor(x: number = 0, y: number = 0, z: number = 0) {
         this._x = x;
         this._y = y;
+        this._z = z;
     }
 
     abstract initialize(): void;
@@ -18,6 +20,7 @@ export abstract class Entity {
 
     get x(): number { return this._x; }
     get y(): number { return this._y; }
+    get z(): number { return this._z; }
 
 }
 

@@ -1,27 +1,23 @@
 import { Entity } from './Entity';
+import { toIso } from './utils';
 
 import palmPNG from './palm01.png';
 
-function toIso(x: number, y: number, width = 64): [number, number] {
-    const isoX = (x * 0.5 - y * 0.5) * width;
-    const isoY = (y * 0.25 + x * 0.25) * width;
-    return [isoX, isoY];
-}
 
 export class Tree extends Entity {
 	
 	private _sprite: any;
 
-	constructor(x: number, y: number, height: number) {
+	constructor(x: number, y: number, z: number) {
 		super(x, y);
 
-		const iso = toIso(x, y);
+		const iso = toIso(x, y, z);
 		const texture = PIXI.utils.TextureCache[palmPNG];
 		this._sprite = new PIXI.Sprite(texture);
 		this._sprite.anchor.x = 0.5;
 		this._sprite.anchor.y = 0.8;
 		this._sprite.x = iso[0];
-		this._sprite.y = iso[1] - height;
+		this._sprite.y = iso[1];
 	}
 
 	initialize() {
@@ -32,5 +28,21 @@ export class Tree extends Entity {
 	}
 
 	get sprite(): any { return this._sprite; }
+
+	set x(worldX: number) {
+		this._x = worldX;
+		const iso = toIso(this._x, this._y, this._z);
+		this._sprite.x = iso[0];
+	}
+	set y(worldY: number) {
+		this._y = worldY;
+		const iso = toIso(this._x, this._y, this._z);
+		this._sprite.y = iso[1];
+	}
+	set z(worldZ: number) {
+		this._z = worldZ;
+		const iso = toIso(this._x, this._y, this._z);
+		this._sprite.y = iso[1];
+	}
 
 }

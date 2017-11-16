@@ -1,6 +1,6 @@
 import { Entity } from './Entity';
 import { Input, WHEEL_DIRECTION } from './Input';
-import { PixiGraphics } from './PixiGraphics';
+import { PixiGraphics } from './Graphics/PixiGraphics';
 
 export class Camera extends Entity { 
 

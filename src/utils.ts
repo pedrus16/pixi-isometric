@@ -1,4 +1,4 @@
-import { TILE_WIDTH, LAYER_HEIGHT } from './PixiIsometricTileMap';
+import { TILE_WIDTH, LAYER_HEIGHT } from './Graphics/PixiIsometricTileMap';
 
 export function toIso(x: number, y: number,  z: number = 0, width = TILE_WIDTH): [number, number] {
     const isoX = (x * 0.5 - y * 0.5) * width;

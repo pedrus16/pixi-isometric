@@ -1,7 +1,7 @@
 import { PixiGraphics } from './PixiGraphics';
 import { PixiIsometricTileMap } from './PixiIsometricTileMap';
-import { HeightMap } from './HeightMap';
-import { TILE_TYPE } from './Map';
+import { HeightMap } from '../HeightMap';
+import { TILE_TYPE } from '../Map';
 
 
 export class PixiIsometric {

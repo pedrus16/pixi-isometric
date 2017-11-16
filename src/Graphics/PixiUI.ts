@@ -1,7 +1,7 @@
 import { PixiGraphics } from './PixiGraphics';
-import { Input } from './Input';
+import { Input } from '../Input';
 
-import './style.css';
+import '../style.css';
 
 export class PixiUI {
 
@@ -33,6 +33,7 @@ export class PixiUI {
             hillButton.style.fontWeight = 'bold';
             cliffButton.style.fontWeight = 'normal';
             treeButton.style.fontWeight = 'normal';
+            dirtButton.style.fontWeight = 'normal';
         });
         this._ui.addChild(hillButton);
 
@@ -50,6 +51,7 @@ export class PixiUI {
             cliffButton.style.fontWeight = 'bold';
             hillButton.style.fontWeight = 'normal';
             treeButton.style.fontWeight = 'normal';
+            dirtButton.style.fontWeight = 'normal';
         });
         this._ui.addChild(cliffButton);
 
@@ -67,6 +69,7 @@ export class PixiUI {
             treeButton.style.fontWeight = 'bold';
             hillButton.style.fontWeight = 'normal';
             cliffButton.style.fontWeight = 'normal';
+            dirtButton.style.fontWeight = 'normal';
         });
         this._ui.addChild(treeButton);
 

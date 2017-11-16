@@ -1,7 +1,7 @@
 import { Entity } from './Entity';
 import { toIso } from './utils';
 
-import palmPNG from './palm01.png';
+import palmPNG from './Graphics/palm01.png';
 
 
 export class Tree extends Entity {

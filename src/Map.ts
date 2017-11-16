@@ -1,8 +1,8 @@
 import { HeightMap } from './HeightMap';
 import { Entity } from './Entity';
 import { Tree } from './Tree';
-import { PixiGraphics } from './PixiGraphics';
-import { PixiIsometric } from './PixiIsometric';
+import { PixiGraphics } from './Graphics/PixiGraphics';
+import { PixiIsometric } from './Graphics/PixiIsometric';
 
 export enum TILE_TYPE {
     DIRT,

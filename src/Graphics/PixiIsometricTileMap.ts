@@ -1,12 +1,12 @@
 import { PixiGraphics } from './PixiGraphics';
-import { HeightMap, CLIFF_HEIGHT } from './HeightMap';
-import { TILE_TYPE } from './Map';
+import { HeightMap, CLIFF_HEIGHT } from '../HeightMap';
+import { TILE_TYPE } from '../Map';
 
 export const TILE_WIDTH = 64;
 export const LAYER_HEIGHT = 16;
 const CHUNK_SIZE = 64;
 
-import { toIso } from './utils';
+import { toIso } from '../utils';
 
 enum SLOPE {
     FLAT = 0b000000,
@@ -192,12 +192,17 @@ export class PixiIsometricTileMap {
     }
 
     private getTextureAt(heightMap: HeightMap, tileTypeMap: TILE_TYPE[], x: number, y: number): string {
+        const tileMap = this.getTileMap(tileTypeMap[y * heightMap.width + x]);
+        
+        return tileMap[this.getSlope(heightMap, x, y)];
+    }
+
+    private getSlope(heightMap: HeightMap, x: number, y: number): number {
         const height_min = this.getHeightAt(heightMap, x, y);
         const height_north = heightMap.getVertexHeight(x, y) - height_min;
         const height_east = heightMap.getVertexHeight(x+1, y) - height_min;
         const height_south = heightMap.getVertexHeight(x+1, y+1) - height_min;
         const height_west = heightMap.getVertexHeight(x, y+1) - height_min;
-
 
         const slope_north = height_north > 0 ? SLOPE.NORTH : 0;
         const slope_east = height_east > 0 ? SLOPE.EAST : 0;
@@ -206,9 +211,11 @@ export class PixiIsometricTileMap {
         const slope_steep = height_north === 2 || height_east === 2 || height_south === 2 || height_west === 2 ? SLOPE.STEEP : 0;
         const cliff = height_north === CLIFF_HEIGHT || height_east === CLIFF_HEIGHT || height_south === CLIFF_HEIGHT || height_west === CLIFF_HEIGHT ? SLOPE.CLIFF : 0;
 
-        const tileMap = this.getTileMap(tileTypeMap[y * heightMap.width + x]);
+        return slope_north | slope_east | slope_south | slope_west | slope_steep | cliff;
+    }
 
-        return tileMap[slope_north|slope_east|slope_south|slope_west|slope_steep|cliff];
+    private getTile(tileTypeMap: TILE_TYPE[], x: number, y: number): number {
+        return 0;
     }
 
     private getHeightAt(heightMap: HeightMap, x: number, y: number): number {

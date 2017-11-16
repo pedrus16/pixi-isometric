@@ -1,7 +1,6 @@
 import { Entity } from './Entity';
-import { PixiGraphics } from './PixiGraphics';
-import { PixiIsometricTileMap } from './PixiIsometricTileMap';
-import { PixiUI } from './PixiUI';
+import { PixiGraphics } from './Graphics/PixiGraphics';
+import { PixiUI } from './Graphics/PixiUI';
 import { Input, WHEEL_DIRECTION } from './Input';
 import { HeightMap } from './HeightMap';
 import { Camera } from './Camera';

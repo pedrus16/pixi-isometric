@@ -1,4 +1,4 @@
-import { Map, CLIFF_HEIGHT } from './Map';
+import { HeightMap, CLIFF_HEIGHT } from './HeightMap';
 import { PixiGraphics } from './PixiGraphics';
 
 import tilesJSON from './tiles.json';
@@ -70,12 +70,12 @@ const TILEMAP = {
 export class PixiIsometricTileMap {
 
     private _graphics: PixiGraphics;
-    private _map: Map;
+    private _map: HeightMap;
 
     public container: any;
     private chunks: { container: any, sprites: any[] }[] = [];
 
-    constructor(graphics: PixiGraphics, map: Map) {
+    constructor(graphics: PixiGraphics, map: HeightMap) {
         this._graphics = graphics;
         this._map = map;
 

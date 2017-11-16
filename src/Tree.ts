@@ -9,7 +9,7 @@ export class Tree extends Entity {
 	private _sprite: any;
 
 	constructor(x: number, y: number, z: number) {
-		super(x, y);
+		super(x, y, z);
 
 		const iso = toIso(x, y, z);
 		const texture = PIXI.utils.TextureCache[palmPNG];
@@ -27,18 +27,25 @@ export class Tree extends Entity {
 
 	}
 
+	destroy() {
+		this._sprite.destroy();
+	}
+
 	get sprite(): any { return this._sprite; }
 
+	get x() { return this._x; }
 	set x(worldX: number) {
 		this._x = worldX;
 		const iso = toIso(this._x, this._y, this._z);
 		this._sprite.x = iso[0];
 	}
+	get y() { return this._y; }
 	set y(worldY: number) {
 		this._y = worldY;
 		const iso = toIso(this._x, this._y, this._z);
 		this._sprite.y = iso[1];
 	}
+	get z() { return this._z; }
 	set z(worldZ: number) {
 		this._z = worldZ;
 		const iso = toIso(this._x, this._y, this._z);

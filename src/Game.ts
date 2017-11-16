@@ -3,16 +3,18 @@ import { PixiGraphics } from './PixiGraphics';
 import { PixiIsometricTileMap } from './PixiIsometricTileMap';
 import { PixiUI } from './PixiUI';
 import { Input, WHEEL_DIRECTION } from './Input';
-import { Map } from './Map';
+import { HeightMap } from './HeightMap';
 import { Camera } from './Camera';
 import { Tree } from './Tree';
+import { Map } from './Map';
 
 export class Game {
 
     private entities: Entity[] = [];
     private graphics: PixiGraphics;
     private input: Input;
-    private tileMap: PixiIsometricTileMap;
+    // private tileMap: PixiIsometricTileMap;
+    // private map: HeightMap;
     private map: Map;
     private ui: PixiUI;
     private camera: Camera;
@@ -21,7 +23,6 @@ export class Game {
     private levelHeight: number = 0;
     private elapsed: number = 0;
     private mouseReleased = true;
-    private tree: Tree;
 
     constructor() {
         this.input = new Input();
@@ -34,18 +35,18 @@ export class Game {
     }
 
     initialize() {
-        this.map = new Map(32, 32);
-        this.addEntity(this.map);
+        this.map = new Map(this.graphics, new HeightMap(32, 32));
+        // this.addEntity(this.map);
 
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
 
-        this.tileMap = new PixiIsometricTileMap(this.graphics, this.map);
+        // this.tileMap = new PixiIsometricTileMap(this.graphics, this.map.heightMap);
         this.ui = new PixiUI(this.graphics, this.input);
 
-        this.tree = new Tree(4.5, 4.5, this.map.getHeightAt(4.5, 4.5));
-        this.graphics.camera.addChild(this.tree.sprite);
-        this.addEntity(this.tree);
+        // this.trees.push(new Tree(4.5, 4.5, this.map.getHeightAt(4.5, 4.5)));
+        // this.graphics.camera.addChild(this.tree.sprite);
+        // this.addEntity(this.tree);
     }
 
     update(dt: number): void {
@@ -83,7 +84,7 @@ export class Game {
     private updateCursor() {
         const tile = this.screenToTile(this.input.mouseX, this.input.mouseY);
         const cursor = this.toIso(tile[0], tile[1]);
-        const height = this.map.getTileHeight(tile[0], tile[1]);
+        const height = this.map.heightMap.getTileHeight(tile[0], tile[1]);
         this.ui.mouseCursor.x = cursor[0] * this.camera.scale - this.camera.x;
         this.ui.mouseCursor.y = (cursor[1] - height * 16) * this.camera.scale - this.camera.y;
         this.ui.mouseCursor.scale.x = this.camera.scale;
@@ -97,35 +98,35 @@ export class Game {
                 if (this.input.isKeyDown('Shift')) {
                     if (this.mouseReleased) {
                         const height = Math.min(
-                            this.map.getVertexHeight(pos[0], pos[1]),
-                            this.map.getVertexHeight(pos[0] + 1, pos[1]),
-                            this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
-                            this.map.getVertexHeight(pos[0], pos[1] + 1),
+                            this.map.heightMap.getVertexHeight(pos[0], pos[1]),
+                            this.map.heightMap.getVertexHeight(pos[0] + 1, pos[1]),
+                            this.map.heightMap.getVertexHeight(pos[0] + 1, pos[1] + 1),
+                            this.map.heightMap.getVertexHeight(pos[0], pos[1] + 1),
                         );
                         this.levelHeight = height;
                     }
-                    this.map.levelTile(pos[0], pos[1], this.levelHeight);
-                    this.updateVisuals();
+                    this.map.heightMap.levelTile(pos[0], pos[1], this.levelHeight);
+                    this.map.updateGraphics();
                 }
                 else {
                     if (this.mouseReleased) {
                         if (this.input.isKeyDown('Control')) {
-                            this.map.lowerTile(pos[0], pos[1]);
+                            this.map.heightMap.lowerTile(pos[0], pos[1]);
                         }
                         else {
-                            this.map.raiseTile(pos[0], pos[1]);
+                            this.map.heightMap.raiseTile(pos[0], pos[1]);
                         }
-                        this.updateVisuals();
+                        this.map.updateGraphics();
                     }
                 }
             }
-            else {
+            else if (this.ui.tool === 'cliff') {
                 if (this.mouseReleased) {
                     const height = Math.min(
-                        this.map.getVertexHeight(pos[0], pos[1]),
-                        this.map.getVertexHeight(pos[0] + 1, pos[1]),
-                        this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
-                        this.map.getVertexHeight(pos[0], pos[1] + 1),
+                        this.map.heightMap.getVertexHeight(pos[0], pos[1]),
+                        this.map.heightMap.getVertexHeight(pos[0] + 1, pos[1]),
+                        this.map.heightMap.getVertexHeight(pos[0] + 1, pos[1] + 1),
+                        this.map.heightMap.getVertexHeight(pos[0], pos[1] + 1),
                     );
                     if (this.input.isKeyDown('Control')) {
                         this.cliffStep = Math.floor(height) / 6 - 1;
@@ -137,19 +138,22 @@ export class Game {
                         this.cliffStep = Math.floor(height) / 6 + 1;
                     }
                 }
-                this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
-                this.updateVisuals();
+                this.map.heightMap.setCliffHeight(pos[0], pos[1], this.cliffStep);
+                this.map.updateGraphics();
+            }
+            else if (this.ui.tool === 'tree') {
+                if (this.input.isKeyDown('Control')) {
+                    this.map.removeTree(pos[0], pos[1]);
+                }
+                else {
+                    this.map.addTree(pos[0], pos[1]);
+                }
             }
             this.mouseReleased = false;
         }
         else {
             this.mouseReleased = true;
         }
-    }
-
-    updateVisuals() {
-        this.tileMap.update();
-        this.tree.z = this.map.getHeightAt(4.5, 4.5);
     }
 
 }

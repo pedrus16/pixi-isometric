@@ -8,7 +8,7 @@ export class PixiUI {
     private _graphics: PixiGraphics;
     private _input: Input;
     private _ui: any;
-    private _tool: 'hill' | 'cliff';
+    private _tool: 'hill' | 'cliff' | 'tree';
     
     public mouseCursor: any;
     public diamond: any;
@@ -21,8 +21,8 @@ export class PixiUI {
         this._tool = 'hill';
 
         const hillButton = new PIXI.Text('Hill', {
-            fontFamily : 'm5x7', 
-            fontSize: 48, 
+            fontFamily : 'Arial', 
+            fontSize: 32, 
             fill : 0xFFFFFF, 
             align : 'left'
         });
@@ -32,26 +32,47 @@ export class PixiUI {
             this._tool = 'hill';
             hillButton.style.fontWeight = 'bold';
             cliffButton.style.fontWeight = 'normal';
+            treeButton.style.fontWeight = 'normal';
         });
         this._ui.addChild(hillButton);
 
         const cliffButton = new PIXI.Text('Cliff', {
-            fontFamily : 'm5x7', 
-            fontSize: 48, 
+            fontFamily : 'Arial', 
+            fontSize: 32, 
             fill : 0xFFFFFF, 
             align : 'left'
         });
         cliffButton.interactive = true;
         cliffButton.buttonMode = true;
-        cliffButton.y = 48;
+        cliffButton.y = 32;
         cliffButton.on('click', () => {
             this._tool = 'cliff';
             cliffButton.style.fontWeight = 'bold';
             hillButton.style.fontWeight = 'normal';
+            treeButton.style.fontWeight = 'normal';
         });
         this._ui.addChild(cliffButton);
+
+        const treeButton = new PIXI.Text('Tree', {
+            fontFamily : 'Arial', 
+            fontSize: 32, 
+            fill : 0xFFFFFF, 
+            align : 'left'
+        });
+        treeButton.interactive = true;
+        treeButton.buttonMode = true;
+        treeButton.y = 64;
+        treeButton.on('click', () => {
+            this._tool = 'tree';
+            treeButton.style.fontWeight = 'bold';
+            hillButton.style.fontWeight = 'normal';
+            cliffButton.style.fontWeight = 'normal';
+        });
+        this._ui.addChild(treeButton);
+
         hillButton.style.fontWeight = 'bold';
         cliffButton.style.fontWeight = 'normal';
+        treeButton.style.fontWeight = 'normal';
 
         this._graphics.app.stage.addChild(this._ui);
 

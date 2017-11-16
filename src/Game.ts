@@ -36,17 +36,9 @@ export class Game {
 
     initialize() {
         this.map = new Map(this.graphics, new HeightMap(32, 32));
-        // this.addEntity(this.map);
-
+        this.ui = new PixiUI(this.graphics, this.input);
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
-
-        // this.tileMap = new PixiIsometricTileMap(this.graphics, this.map.heightMap);
-        this.ui = new PixiUI(this.graphics, this.input);
-
-        // this.trees.push(new Tree(4.5, 4.5, this.map.getHeightAt(4.5, 4.5)));
-        // this.graphics.camera.addChild(this.tree.sprite);
-        // this.addEntity(this.tree);
     }
 
     update(dt: number): void {

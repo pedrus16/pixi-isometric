@@ -18,14 +18,12 @@ export class Tree extends Entity {
 		this._sprite.anchor.y = 0.8;
 		this._sprite.x = iso[0];
 		this._sprite.y = iso[1];
+		this._sprite.z = z;
 	}
 
-	initialize() {
-	}
+	initialize() {}
 
-	update(dt: number) {
-
-	}
+	update(dt: number) {}
 
 	destroy() {
 		this._sprite.destroy();

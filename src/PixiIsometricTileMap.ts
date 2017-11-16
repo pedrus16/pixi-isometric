@@ -70,7 +70,7 @@ function toIso(x: number, y: number, width = TILE_WIDTH): [number, number] {
     return [isoX, isoY];
 }
 
-export class PixiIsometricMap {
+export class PixiIsometricTileMap {
 
     private _graphics: PixiGraphics;
     private _map: Map;

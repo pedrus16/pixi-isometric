@@ -1,116 +1,57 @@
 import { Entity } from './Entity';
 import { PixiGraphics } from './PixiGraphics';
-import { PixiIsometricMap } from './PixiIsometricMap';
+import { PixiIsometricTileMap } from './PixiIsometricTileMap';
 import { PixiUI } from './PixiUI';
 import { Input, WHEEL_DIRECTION } from './Input';
 import { Map } from './Map';
 import { Camera } from './Camera';
 import { Tree } from './Tree';
 
-import tilesJSON from './tiles.json';
-import cliffJSON from './cliff.json';
-import palmPNG from './palm01.png';
-
-
 export class Game {
 
+    private entities: Entity[] = [];
+    private graphics: PixiGraphics;
+    private input: Input;
+    private tileMap: PixiIsometricTileMap;
+    private map: Map;
+    private ui: PixiUI;
     private camera: Camera;
     private cliffStep: number = 0;
     private levelCliff: number = 0;
     private levelHeight: number = 0;
     private elapsed: number = 0;
-    private entities: Entity[] = [];
-    private graphics: PixiGraphics;
-    private input: Input;
-    private isometric: PixiIsometricMap;
-    private map: Map;
     private mouseReleased = true;
-    private ui: PixiUI;
 
     constructor() {
         this.input = new Input();
         this.update = this.update.bind(this);
+        this.initialize = this.initialize.bind(this);
     }
 
     start() {
-        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-        PIXI.loader.add([tilesJSON, cliffJSON, palmPNG]).load(() => {
+        this.graphics = new PixiGraphics(this.initialize, this.update);
+    }
 
-            this.map = new Map(32, 32);
-            this.graphics = new PixiGraphics(this.update);
-            this.camera = new Camera(this.graphics, this.input);
-            this.isometric = new PixiIsometricMap(this.graphics, this.map);
-            this.ui = new PixiUI(this.graphics, this.input);
-            this.addEntity(this.map);
-            this.addEntity(this.camera);
+    initialize() {
+        this.map = new Map(32, 32);
+        this.addEntity(this.map);
 
-            const tree = new Tree(4, 4);
-            this.graphics.camera.addChild(tree.sprite);
-            console.log(tree.sprite.x, tree.sprite.y);
-            this.addEntity(tree);
+        this.camera = new Camera(this.graphics, this.input);
+        this.addEntity(this.camera);
 
-        });
+        this.tileMap = new PixiIsometricTileMap(this.graphics, this.map);
+        this.ui = new PixiUI(this.graphics, this.input);
+
+        const tree = new Tree(4.5, 4.5, 1);
+        this.graphics.camera.addChild(tree.sprite);
+        this.addEntity(tree);
     }
 
     update(dt: number): void {
         this.input.update(dt);
         this.updateCursor();
-        if (this.input.mouseLeftDown) {
-            const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
-            if (this.ui.tool === 'hill') {
-                if (this.input.isKeyDown('Shift')) {
-                    if (this.mouseReleased) {
-                        const height = Math.min(
-                            this.map.getVertexHeight(pos[0], pos[1]),
-                            this.map.getVertexHeight(pos[0] + 1, pos[1]),
-                            this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
-                            this.map.getVertexHeight(pos[0], pos[1] + 1),
-                        );
-                        this.levelHeight = height;
-                    }
-                    this.map.levelTile(pos[0], pos[1], this.levelHeight);
-                    this.isometric.update();
-                }
-                else {
-                    if (this.mouseReleased) {
-                        if (this.input.isKeyDown('Control')) {
-                            this.map.lowerTile(pos[0], pos[1]);
-                        }
-                        else {
-                            this.map.raiseTile(pos[0], pos[1]);
-                        }
-                        this.isometric.update();
-                    }
-                }
-            }
-            else {
-                if (this.mouseReleased) {
-                    const height = Math.min(
-                        this.map.getVertexHeight(pos[0], pos[1]),
-                        this.map.getVertexHeight(pos[0] + 1, pos[1]),
-                        this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
-                        this.map.getVertexHeight(pos[0], pos[1] + 1),
-                    );
-                    if (this.input.isKeyDown('Control')) {
-                        this.cliffStep = Math.floor(height) / 6 - 1;
-                    }
-                    else if (this.input.isKeyDown('Shift')) {
-                        this.cliffStep = Math.floor(height) / 6;
-                    }
-                    else {
-                        this.cliffStep = Math.floor(height) / 6 + 1;
-                    }
-                }
-                this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
-                this.isometric.update();
-            }
-            this.mouseReleased = false;
-        }
-        else {
-            this.mouseReleased = true;
-        }
+        this.handleInput();
         this.entities.forEach((entity) => entity.update(dt));
-        // this.isometric.update();
     }
 
     addEntity(ent: Entity) {
@@ -146,6 +87,63 @@ export class Game {
         this.ui.mouseCursor.y = (cursor[1] - height * 16) * this.camera.scale - this.camera.y;
         this.ui.mouseCursor.scale.x = this.camera.scale;
         this.ui.mouseCursor.scale.y = this.camera.scale;
+    }
+
+    private handleInput() {
+        if (this.input.mouseLeftDown) {
+            const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
+            if (this.ui.tool === 'hill') {
+                if (this.input.isKeyDown('Shift')) {
+                    if (this.mouseReleased) {
+                        const height = Math.min(
+                            this.map.getVertexHeight(pos[0], pos[1]),
+                            this.map.getVertexHeight(pos[0] + 1, pos[1]),
+                            this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
+                            this.map.getVertexHeight(pos[0], pos[1] + 1),
+                        );
+                        this.levelHeight = height;
+                    }
+                    this.map.levelTile(pos[0], pos[1], this.levelHeight);
+                    this.tileMap.update();
+                }
+                else {
+                    if (this.mouseReleased) {
+                        if (this.input.isKeyDown('Control')) {
+                            this.map.lowerTile(pos[0], pos[1]);
+                        }
+                        else {
+                            this.map.raiseTile(pos[0], pos[1]);
+                        }
+                        this.tileMap.update();
+                    }
+                }
+            }
+            else {
+                if (this.mouseReleased) {
+                    const height = Math.min(
+                        this.map.getVertexHeight(pos[0], pos[1]),
+                        this.map.getVertexHeight(pos[0] + 1, pos[1]),
+                        this.map.getVertexHeight(pos[0] + 1, pos[1] + 1),
+                        this.map.getVertexHeight(pos[0], pos[1] + 1),
+                    );
+                    if (this.input.isKeyDown('Control')) {
+                        this.cliffStep = Math.floor(height) / 6 - 1;
+                    }
+                    else if (this.input.isKeyDown('Shift')) {
+                        this.cliffStep = Math.floor(height) / 6;
+                    }
+                    else {
+                        this.cliffStep = Math.floor(height) / 6 + 1;
+                    }
+                }
+                this.map.setCliffHeight(pos[0], pos[1], this.cliffStep);
+                this.tileMap.update();
+            }
+            this.mouseReleased = false;
+        }
+        else {
+            this.mouseReleased = true;
+        }
     }
 
 }

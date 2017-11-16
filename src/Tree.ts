@@ -12,15 +12,16 @@ export class Tree extends Entity {
 	
 	private _sprite: any;
 
-	constructor(tileX: number, tileY: number) {
-		super(tileX, tileY);
-		const iso = toIso(tileX + 0.5, tileY + 0.5);
+	constructor(x: number, y: number, height: number) {
+		super(x, y);
+
+		const iso = toIso(x, y);
 		const texture = PIXI.utils.TextureCache[palmPNG];
 		this._sprite = new PIXI.Sprite(texture);
 		this._sprite.anchor.x = 0.5;
 		this._sprite.anchor.y = 0.8;
 		this._sprite.x = iso[0];
-		this._sprite.y = iso[1];
+		this._sprite.y = iso[1] - height;
 	}
 
 	initialize() {

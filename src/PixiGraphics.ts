@@ -1,9 +1,14 @@
+import tilesJSON from './tiles.json';
+import cliffJSON from './cliff.json';
+import palmPNG from './palm01.png';
+
+
 export class PixiGraphics {
 
     public app: any;
     public camera: any;
 
-    constructor(updateCallback: Function) {
+    constructor(initCallback: Function, updateCallback: Function) {
         var type = "WebGL";
         if (!PIXI.utils.isWebGLSupported()) {
             type = "canvas";
@@ -18,13 +23,18 @@ export class PixiGraphics {
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         document.body.appendChild(this.app.view);
         this.app.ticker.speed = 1;
-        this.app.ticker.add(() => {
-            updateCallback(this.app.ticker.deltaTime);
-        });
-        this.camera = new PIXI.Container();
-        this.app.stage.addChild(this.camera);
 
-        
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+        PIXI.loader.add([tilesJSON, cliffJSON, palmPNG]).load(() => {
+            this.camera = new PIXI.Container();
+            this.app.stage.addChild(this.camera);
+            initCallback();
+
+            this.app.ticker.add(() => {
+                updateCallback(this.app.ticker.deltaTime);
+            });
+            
+        });
 
         // window.addEventListener('resize', (event) => {
         //     this.app.renderer.resize(window.innerWidth, window.innerHeight);

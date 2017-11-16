@@ -4,6 +4,12 @@ import { Tree } from './Tree';
 import { PixiGraphics } from './PixiGraphics';
 import { PixiIsometric } from './PixiIsometric';
 
+export enum TILE_TYPE {
+    DIRT,
+    GRASS,
+    WATER,
+};
+
 
 export class Map {
 
@@ -11,11 +17,14 @@ export class Map {
     private _isometricGraphics: PixiIsometric;
     private _heightMap: HeightMap;
     private _trees: Tree[] = [];
+    private _tileTypeMap: TILE_TYPE[];
 
     constructor(graphics: PixiGraphics, heightMap: HeightMap) {
         this._graphics = graphics;
         this._heightMap = heightMap;
-        this._isometricGraphics = new PixiIsometric(this._graphics, this._heightMap);
+        this._tileTypeMap = [];
+        for (let i = 0; i < this._heightMap.width * this._heightMap.height; ++i) { this._tileTypeMap.push(TILE_TYPE.GRASS); }
+        this._isometricGraphics = new PixiIsometric(this._graphics, this._heightMap, this._tileTypeMap);
     }
 
     get heightMap() { return this._heightMap; }
@@ -42,6 +51,17 @@ export class Map {
     updateGraphics() {
         this._isometricGraphics.update();
         this._trees.forEach((tree) => tree.z = this._heightMap.getHeightAt(tree.x, tree.y));
+    }
+
+    getTileAt(x: number, y: number): TILE_TYPE {
+        if (x < 0 || y < 0 || x >= this._heightMap.width || y >= this._heightMap.height) { return 0; }
+        return this._tileTypeMap[y * this._heightMap.width + x];
+    }
+
+    setTileAt(x: number, y: number, type: TILE_TYPE) {
+        if (x < 0 || y < 0 || x >= this._heightMap.width || y >= this._heightMap.height) { return 0; }
+        this._tileTypeMap[y * this._heightMap.width + x] = type;
+        this._isometricGraphics.update();
     }
 
 }

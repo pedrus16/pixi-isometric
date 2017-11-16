@@ -8,7 +8,7 @@ export class PixiUI {
     private _graphics: PixiGraphics;
     private _input: Input;
     private _ui: any;
-    private _tool: 'hill' | 'cliff' | 'tree';
+    private _tool: 'hill' | 'cliff' | 'tree' | 'dirt';
     
     public mouseCursor: any;
     public diamond: any;
@@ -70,9 +70,28 @@ export class PixiUI {
         });
         this._ui.addChild(treeButton);
 
+        const dirtButton = new PIXI.Text('Dirt', {
+            fontFamily : 'Arial', 
+            fontSize: 32, 
+            fill : 0xFFFFFF, 
+            align : 'left'
+        });
+        dirtButton.interactive = true;
+        dirtButton.buttonMode = true;
+        dirtButton.y = 64+32;
+        dirtButton.on('click', () => {
+            this._tool = 'dirt';
+            dirtButton.style.fontWeight = 'bold';
+            hillButton.style.fontWeight = 'normal';
+            cliffButton.style.fontWeight = 'normal';
+            treeButton.style.fontWeight = 'normal';
+        });
+        this._ui.addChild(dirtButton);
+
         hillButton.style.fontWeight = 'bold';
         cliffButton.style.fontWeight = 'normal';
         treeButton.style.fontWeight = 'normal';
+        dirtButton.style.fontWeight = 'normal';
 
         this._graphics.app.stage.addChild(this._ui);
 

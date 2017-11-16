@@ -6,15 +6,13 @@ import { Input, WHEEL_DIRECTION } from './Input';
 import { HeightMap } from './HeightMap';
 import { Camera } from './Camera';
 import { Tree } from './Tree';
-import { Map } from './Map';
+import { Map, TILE_TYPE } from './Map';
 
 export class Game {
 
     private entities: Entity[] = [];
     private graphics: PixiGraphics;
     private input: Input;
-    // private tileMap: PixiIsometricTileMap;
-    // private map: HeightMap;
     private map: Map;
     private ui: PixiUI;
     private camera: Camera;
@@ -35,7 +33,7 @@ export class Game {
     }
 
     initialize() {
-        this.map = new Map(this.graphics, new HeightMap(32, 32));
+        this.map = new Map(this.graphics, new HeightMap(64, 64));
         this.ui = new PixiUI(this.graphics, this.input);
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
@@ -139,6 +137,14 @@ export class Game {
                 }
                 else {
                     this.map.addTree(pos[0], pos[1]);
+                }
+            }
+            else if (this.ui.tool === 'dirt') {
+                if (this.input.isKeyDown('Control')) {
+                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.GRASS);
+                }
+                else {
+                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.DIRT);
                 }
             }
             this.mouseReleased = false;

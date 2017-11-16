@@ -1,15 +1,10 @@
 export const CLIFF_HEIGHT = 6;
 
-export enum TILE_TYPE {
-    DIRT,
-    GRASS,
-    WATER,
-};
 
 export class HeightMap {
 
     private _heightMap: number[];
-    private _tileMap: TILE_TYPE[];
+    
     private _width: number;
     private _height: number;
 
@@ -19,8 +14,6 @@ export class HeightMap {
 
         this._heightMap = [];
         for (let i = 0; i < this._width * this._height; ++i) { this._heightMap.push(0); }
-        this._tileMap = [];
-        for (let i = 0; i < width * height; ++i) { this._tileMap.push(TILE_TYPE.GRASS); }
     }
 
     get width(): number { return this._width - 1; }
@@ -53,11 +46,6 @@ export class HeightMap {
 
         return Math.min(north, east, south, west);
     } 
-
-    getTileAt(x: number, y: number): TILE_TYPE {
-        if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return 0; }
-        return this._tileMap[y * this._width + x];
-    }
 
     getVertexHeight(x: number, y: number) {
         x = Math.max(0, Math.min(x, this._width - 1));

@@ -1,4 +1,5 @@
-import tilesJSON from './tiles.json';
+import grassJSON from './tiles/grass.json';
+import dirtJSON from './tiles/dirt.json';
 import cliffJSON from './cliff.json';
 import palmPNG from './palm01.png';
 
@@ -25,7 +26,12 @@ export class PixiGraphics {
         this.app.ticker.speed = 1;
 
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-        PIXI.loader.add([tilesJSON, cliffJSON, palmPNG]).load(() => {
+        PIXI.loader.add([
+            grassJSON, 
+            dirtJSON, 
+            cliffJSON, 
+            palmPNG,
+        ]).load(() => {
             this.camera = new PIXI.Container();
             this.app.stage.addChild(this.camera);
             initCallback();

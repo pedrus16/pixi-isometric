@@ -59,14 +59,8 @@ export class Map {
     }
 
     setTileAt(x: number, y: number, type: TILE_TYPE) {
-        if (x < 0 || y < 0 || x >= this._heightMap.width || y >= this._heightMap.height) { return 0; }
-        this._tileTypeMap[y * this._heightMap.width + x] = type;
-        this._isometricGraphics.update();
-    }
-
-    setWaterAt(x: number, y: number) {
         if (this._heightMap.getSlope(x, y) !== SLOPE.FLAT) { return; } 
-        this._tileTypeMap[y * this._heightMap.width + x] = TILE_TYPE.DIRT;
+        this._tileTypeMap[y * this._heightMap.width + x] = type;
         this._isometricGraphics.update();
     }
 

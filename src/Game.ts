@@ -151,7 +151,7 @@ export class Game {
                     this.map.setTileAt(pos[0], pos[1], TILE_TYPE.GRASS);
                 }
                 else {
-                    this.map.setWaterAt(pos[0], pos[1]);
+                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.WATER);
                 }
             }
             this.mouseReleased = false;

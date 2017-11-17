@@ -22,7 +22,7 @@ export class PixiGraphics {
         });
         this.app.renderer.autoResize = true;
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-        document.body.appendChild(this.app.view);
+        document.getElementById('viewport').appendChild(this.app.view);
         this.app.ticker.speed = 1;
 
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;

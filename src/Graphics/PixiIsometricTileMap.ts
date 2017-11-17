@@ -1,5 +1,5 @@
 import { PixiGraphics } from './PixiGraphics';
-import { HeightMap, CLIFF_HEIGHT } from '../HeightMap';
+import { HeightMap, CLIFF_HEIGHT, SLOPE } from '../HeightMap';
 import { TILE_TYPE } from '../Map';
 
 export const TILE_WIDTH = 64;
@@ -8,15 +8,6 @@ const CHUNK_SIZE = 64;
 
 import { toIso } from '../utils';
 
-enum SLOPE {
-    FLAT = 0b000000,
-    NORTH = 0b001000,
-    EAST = 0b000100,
-    SOUTH = 0b000010,
-    WEST = 0b000001,
-    STEEP = 0b010000,
-    CLIFF = 0b100000,
-};
 
 const GRASS_TILEMAP = {
     [SLOPE.FLAT]: "grass_01.png",
@@ -174,9 +165,8 @@ export class PixiIsometricTileMap {
             chunk.sprites.forEach((sprite, sprite_index) => {
                 const x = sprite_index % sizeX;
                 const y = Math.floor(sprite_index / sizeX);
-                const texture = PIXI.utils.TextureCache[this.getTextureAt(heightMap, tileTypeMap, cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y)];
-                sprite.texture = texture || PIXI.Texture.EMPTY;
-                const spritePos = toIso(x, y, this.getHeightAt(heightMap, cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y));
+                sprite.texture = this.getTextureAt(heightMap, tileTypeMap, cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y);
+                const spritePos = toIso(x, y, heightMap.getTileHeight(cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y));
                 sprite.y = chunkPos[1] + spritePos[1] + TILE_WIDTH * 0.5;
             });
             // chunk.container.cacheAsBitmap = true;
@@ -192,39 +182,14 @@ export class PixiIsometricTileMap {
     }
 
     private getTextureAt(heightMap: HeightMap, tileTypeMap: TILE_TYPE[], x: number, y: number): string {
-        const tileMap = this.getTileMap(tileTypeMap[y * heightMap.width + x]);
-        
-        return tileMap[this.getSlope(heightMap, x, y)];
-    }
-
-    private getSlope(heightMap: HeightMap, x: number, y: number): number {
-        const height_min = this.getHeightAt(heightMap, x, y);
-        const height_north = heightMap.getVertexHeight(x, y) - height_min;
-        const height_east = heightMap.getVertexHeight(x+1, y) - height_min;
-        const height_south = heightMap.getVertexHeight(x+1, y+1) - height_min;
-        const height_west = heightMap.getVertexHeight(x, y+1) - height_min;
-
-        const slope_north = height_north > 0 ? SLOPE.NORTH : 0;
-        const slope_east = height_east > 0 ? SLOPE.EAST : 0;
-        const slope_south = height_south > 0 ? SLOPE.SOUTH : 0;
-        const slope_west = height_west > 0 ? SLOPE.WEST : 0;
-        const slope_steep = height_north === 2 || height_east === 2 || height_south === 2 || height_west === 2 ? SLOPE.STEEP : 0;
-        const cliff = height_north === CLIFF_HEIGHT || height_east === CLIFF_HEIGHT || height_south === CLIFF_HEIGHT || height_west === CLIFF_HEIGHT ? SLOPE.CLIFF : 0;
-
-        return slope_north | slope_east | slope_south | slope_west | slope_steep | cliff;
+        const tileType = tileTypeMap[y * heightMap.width + x];
+        const tileMap = this.getTileMap(tileType);
+        const textureName = tileMap[heightMap.getSlope(x, y)];
+        return PIXI.utils.TextureCache[textureName] || PIXI.Texture.EMPTY;
     }
 
     private getTile(tileTypeMap: TILE_TYPE[], x: number, y: number): number {
         return 0;
-    }
-
-    private getHeightAt(heightMap: HeightMap, x: number, y: number): number {
-        const north = heightMap.getVertexHeight(x, y);
-        const east = heightMap.getVertexHeight(x+1, y);
-        const south = heightMap.getVertexHeight(x+1, y+1);
-        const west = heightMap.getVertexHeight(x, y+1);
-
-        return Math.min(north, east, south, west);
     }
 
     private getTileMap(type: TILE_TYPE): any {

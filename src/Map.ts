@@ -16,8 +16,8 @@ export class Map {
     private _graphics: PixiGraphics;
     private _isometricGraphics: PixiIsometric;
     private _heightMap: HeightMap;
-    private _trees: Tree[] = [];
     private _tileTypeMap: TILE_TYPE[];
+    private _trees: Tree[] = [];
 
     constructor(graphics: PixiGraphics, heightMap: HeightMap) {
         this._graphics = graphics;

@@ -1,5 +1,15 @@
 export const CLIFF_HEIGHT = 6;
 
+export enum SLOPE {
+    FLAT = 0b000000,
+    NORTH = 0b001000,
+    EAST = 0b000100,
+    SOUTH = 0b000010,
+    WEST = 0b000001,
+    STEEP = 0b010000,
+    CLIFF = 0b100000,
+};
+
 
 export class HeightMap {
 
@@ -122,6 +132,23 @@ export class HeightMap {
             }
         }
         this.setTileHeight(tileX, tileY, CLIFF_HEIGHT * step);
+    }
+
+    getSlope(x: number, y: number): number {
+        const height_min = this.getTileHeight(x, y);
+        const height_north = this.getVertexHeight(x, y) - height_min;
+        const height_east = this.getVertexHeight(x+1, y) - height_min;
+        const height_south = this.getVertexHeight(x+1, y+1) - height_min;
+        const height_west = this.getVertexHeight(x, y+1) - height_min;
+
+        const slope_north = height_north > 0 ? SLOPE.NORTH : 0;
+        const slope_east = height_east > 0 ? SLOPE.EAST : 0;
+        const slope_south = height_south > 0 ? SLOPE.SOUTH : 0;
+        const slope_west = height_west > 0 ? SLOPE.WEST : 0;
+        const slope_steep = height_north === 2 || height_east === 2 || height_south === 2 || height_west === 2 ? SLOPE.STEEP : 0;
+        const cliff = height_north === CLIFF_HEIGHT || height_east === CLIFF_HEIGHT || height_south === CLIFF_HEIGHT || height_west === CLIFF_HEIGHT ? SLOPE.CLIFF : 0;
+
+        return slope_north | slope_east | slope_south | slope_west | slope_steep | cliff;
     }
 
     private setVertexHeightSafe(x: number, y: number, height: number, step = 1) {

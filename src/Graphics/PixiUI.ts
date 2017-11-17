@@ -20,81 +20,10 @@ export class PixiUI {
         this._ui = new PIXI.Container();
         this._tool = 'hill';
 
-        const hillButton = new PIXI.Text('Hill', {
-            fontFamily : 'Arial', 
-            fontSize: 32, 
-            fill : 0xFFFFFF, 
-            align : 'left'
-        });
-        hillButton.interactive = true;
-        hillButton.buttonMode = true;
-        hillButton.on('click', () => {
-            this._tool = 'hill';
-            hillButton.style.fontWeight = 'bold';
-            cliffButton.style.fontWeight = 'normal';
-            treeButton.style.fontWeight = 'normal';
-            dirtButton.style.fontWeight = 'normal';
-        });
-        this._ui.addChild(hillButton);
-
-        const cliffButton = new PIXI.Text('Cliff', {
-            fontFamily : 'Arial', 
-            fontSize: 32, 
-            fill : 0xFFFFFF, 
-            align : 'left'
-        });
-        cliffButton.interactive = true;
-        cliffButton.buttonMode = true;
-        cliffButton.y = 32;
-        cliffButton.on('click', () => {
-            this._tool = 'cliff';
-            cliffButton.style.fontWeight = 'bold';
-            hillButton.style.fontWeight = 'normal';
-            treeButton.style.fontWeight = 'normal';
-            dirtButton.style.fontWeight = 'normal';
-        });
-        this._ui.addChild(cliffButton);
-
-        const treeButton = new PIXI.Text('Tree', {
-            fontFamily : 'Arial', 
-            fontSize: 32, 
-            fill : 0xFFFFFF, 
-            align : 'left'
-        });
-        treeButton.interactive = true;
-        treeButton.buttonMode = true;
-        treeButton.y = 64;
-        treeButton.on('click', () => {
-            this._tool = 'tree';
-            treeButton.style.fontWeight = 'bold';
-            hillButton.style.fontWeight = 'normal';
-            cliffButton.style.fontWeight = 'normal';
-            dirtButton.style.fontWeight = 'normal';
-        });
-        this._ui.addChild(treeButton);
-
-        const dirtButton = new PIXI.Text('Dirt', {
-            fontFamily : 'Arial', 
-            fontSize: 32, 
-            fill : 0xFFFFFF, 
-            align : 'left'
-        });
-        dirtButton.interactive = true;
-        dirtButton.buttonMode = true;
-        dirtButton.y = 64+32;
-        dirtButton.on('click', () => {
-            this._tool = 'dirt';
-            dirtButton.style.fontWeight = 'bold';
-            hillButton.style.fontWeight = 'normal';
-            cliffButton.style.fontWeight = 'normal';
-            treeButton.style.fontWeight = 'normal';
-        });
-        this._ui.addChild(dirtButton);
-
-        hillButton.style.fontWeight = 'bold';
-        cliffButton.style.fontWeight = 'normal';
-        treeButton.style.fontWeight = 'normal';
-        dirtButton.style.fontWeight = 'normal';
+        document.getElementById('tool-hill').addEventListener('click', (e) => this._tool = 'hill');
+        document.getElementById('tool-cliff').addEventListener('click', (e) => this._tool = 'cliff');
+        document.getElementById('tool-tree').addEventListener('click', (e) => this._tool = 'tree');
+        document.getElementById('tool-dirt').addEventListener('click', (e) => this._tool = 'dirt');
 
         this._graphics.app.stage.addChild(this._ui);
 

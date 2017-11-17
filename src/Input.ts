@@ -19,7 +19,8 @@ export class Input {
 
         this._keys = {};
 
-        window.addEventListener('mousedown', (event) => {
+        const viewportEl = document.getElementById('viewport');
+        viewportEl.addEventListener('mousedown', (event) => {
             this._mouseDown = true;
             if (event.button === 0) {
                 this._mouseLeftDown = true;
@@ -39,7 +40,7 @@ export class Input {
             }
         });
 
-        window.addEventListener('contextmenu', (event) => {
+        viewportEl.addEventListener('contextmenu', (event) => {
             event.preventDefault();
             return false;
         });
@@ -49,7 +50,7 @@ export class Input {
             this._mouseY = event.clientY;
         });
 
-        window.addEventListener('mousewheel', (event) => {
+        viewportEl.addEventListener('mousewheel', (event) => {
             if (this._mouseWheelCallback) {
                 let direction;
                 if (event.deltaY > 0) {
@@ -62,11 +63,11 @@ export class Input {
             }
         });
 
-        window.addEventListener('keydown', (event) => {
+        viewportEl.addEventListener('keydown', (event) => {
             this._keys[event.key] = true;
         });
 
-        window.addEventListener('keyup', (event) => {
+        viewportEl.addEventListener('keyup', (event) => {
             this._keys[event.key] = false;
         });
     }

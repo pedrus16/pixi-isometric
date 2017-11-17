@@ -8,7 +8,7 @@ export class PixiUI {
     private _graphics: PixiGraphics;
     private _input: Input;
     private _ui: any;
-    private _tool: 'hill' | 'cliff' | 'tree' | 'dirt';
+    private _tool: 'hill' | 'cliff' | 'tree' | 'dirt' | 'water';
     
     public mouseCursor: any;
     public diamond: any;
@@ -24,6 +24,7 @@ export class PixiUI {
         document.getElementById('tool-cliff').addEventListener('click', (e) => this._tool = 'cliff');
         document.getElementById('tool-tree').addEventListener('click', (e) => this._tool = 'tree');
         document.getElementById('tool-dirt').addEventListener('click', (e) => this._tool = 'dirt');
+        document.getElementById('tool-water').addEventListener('click', (e) => this._tool = 'water');
 
         this._graphics.app.stage.addChild(this._ui);
 
@@ -34,8 +35,7 @@ export class PixiUI {
         this._ui.addChild(this.mouseCursor);
     }
 
-    update(dt: number) {
-    }
+    update(dt: number) {}
 
     get tool(): string { return this._tool; }
 

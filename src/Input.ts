@@ -63,11 +63,11 @@ export class Input {
             }
         });
 
-        viewportEl.addEventListener('keydown', (event) => {
+        window.addEventListener('keydown', (event) => {
             this._keys[event.key] = true;
         });
 
-        viewportEl.addEventListener('keyup', (event) => {
+        window.addEventListener('keyup', (event) => {
             this._keys[event.key] = false;
         });
     }

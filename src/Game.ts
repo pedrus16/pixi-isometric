@@ -146,6 +146,14 @@ export class Game {
                     this.map.setTileAt(pos[0], pos[1], TILE_TYPE.DIRT);
                 }
             }
+            else if (this.ui.tool === 'water') {
+                if (this.input.isKeyDown('Control')) {
+                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.GRASS);
+                }
+                else {
+                    this.map.setWaterAt(pos[0], pos[1]);
+                }
+            }
             this.mouseReleased = false;
         }
         else {

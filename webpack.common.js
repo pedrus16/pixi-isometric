@@ -8,7 +8,7 @@ module.exports = {
 		rules: [
 			{
 				test: /\.tsx?$/,
-				use: 'ts-loader',
+				use: 'awesome-typescript-loader',
 				exclude: /node_modules/
 			},
 			{
@@ -41,10 +41,6 @@ module.exports = {
 		filename: 'bundle.js',
 		path: path.resolve(__dirname, 'dist')
 	},
-	devServer: {
-		contentBase: './dist'
-	},
-	devtool: 'inline-source-map',
 	plugins: [
 		new webpack.ProvidePlugin({
 			PIXI: 'pixi.js'

@@ -140,18 +140,24 @@ export class Game {
             }
             else if (this.ui.tool === 'dirt') {
                 if (this.input.isKeyDown('Control')) {
-                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.GRASS);
+                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.GRASS);
                 }
                 else {
-                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.DIRT);
+                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.DIRT);
                 }
             }
             else if (this.ui.tool === 'water') {
                 if (this.input.isKeyDown('Control')) {
-                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.GRASS);
+                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.GRASS);
+                    this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.GRASS);
+                    this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.GRASS);
+                    this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.GRASS);
                 }
                 else {
-                    this.map.setTileAt(pos[0], pos[1], TILE_TYPE.WATER);
+                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.WATER);
+                    this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.WATER);
+                    this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.WATER);
+                    this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.WATER);
                 }
             }
             this.mouseReleased = false;

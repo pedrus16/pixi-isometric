@@ -99,6 +99,39 @@ const DIRT_TILEMAP = {
     [SLOPE.CLIFF|SLOPE.WEST|SLOPE.EAST]: "cliff_west_east.png",
 };
 
+enum TRANSITION {
+    NONE = 0b0000,
+    NORTH = 0b1000,
+    EAST = 0b0100,
+    SOUTH = 0b0010,
+    WEST = 0b0001
+};
+
+const TRANSITION_TILEMAP = {
+
+    [TRANSITION.NONE]: "empty.png",
+
+    [TRANSITION.NORTH]: "north.png",
+    [TRANSITION.EAST]: "east.png",
+    [TRANSITION.SOUTH]: "south.png",
+    [TRANSITION.WEST]: "west.png",
+
+    [TRANSITION.NORTH|TRANSITION.EAST]: "north_east.png",
+    [TRANSITION.NORTH|TRANSITION.WEST]: "north_west.png",
+    [TRANSITION.EAST|TRANSITION.SOUTH]: "east_south.png",
+    [TRANSITION.SOUTH|TRANSITION.WEST]: "south_west.png",
+
+    [TRANSITION.NORTH|TRANSITION.EAST|TRANSITION.WEST]: "north_east_west.png",
+    [TRANSITION.NORTH|TRANSITION.EAST|TRANSITION.SOUTH]: "north_east_south.png",
+    [TRANSITION.EAST|TRANSITION.SOUTH|TRANSITION.WEST]: "east_south_west.png",
+    [TRANSITION.NORTH|TRANSITION.SOUTH|TRANSITION.WEST]: "north_south_west.png",
+
+    [TRANSITION.NORTH|TRANSITION.SOUTH]: "north_south.png",
+    [TRANSITION.EAST|TRANSITION.WEST]: "east_west.png",
+
+    [TRANSITION.NORTH|TRANSITION.EAST|TRANSITION.SOUTH|TRANSITION.WEST]: "north_east_south_west.png",
+};
+
 
 export class PixiIsometricTileMap {
 
@@ -131,9 +164,9 @@ export class PixiIsometricTileMap {
                 const sizeY = chunksY - cy >= 1 ? CHUNK_SIZE : CHUNK_SIZE * (chunksY - cy);
                 for (let y = 0; y < sizeY; ++y) {
                     for (let x = 0; x < sizeX; ++x) {
-                        const texture = PIXI.utils.TextureCache[GRASS_TILEMAP[SLOPE.FLAT]];
-                        if (texture) {
-                            const sprite = new PIXI.Sprite(texture);
+                        // const texture = PIXI.utils.TextureCache[GRASS_TILEMAP[SLOPE.FLAT]];
+                        // if (texture) {
+                            const sprite = new PIXI.Sprite(this.getTextureAt(heightMap, tileTypeMap, cx * CHUNK_SIZE + x, cy * CHUNK_SIZE + y));
                             sprites.push(sprite);
                             sprite.anchor.x = 0.5;
                             sprite.anchor.y = 1;
@@ -141,7 +174,7 @@ export class PixiIsometricTileMap {
                             sprite.x = chunkPos[0] + spritePos[0];
                             sprite.y = chunkPos[1] + spritePos[1] + TILE_WIDTH * 0.5;
                             chunk_container.addChild(sprite);
-                        }
+                        // }
                     }
                 }
                 this.container.addChild(chunk_container);
@@ -181,11 +214,22 @@ export class PixiIsometricTileMap {
         return sprites;
     }
 
-    private getTextureAt(heightMap: HeightMap, tileTypeMap: TILE_TYPE[], x: number, y: number): string {
-        const tileType = tileTypeMap[y * heightMap.width + x];
-        const tileMap = this.getTileMap(tileType);
-        const textureName = tileMap[heightMap.getSlope(x, y)];
-        return PIXI.utils.TextureCache[textureName] || PIXI.Texture.EMPTY;
+    private getTextureAt(heightMap: HeightMap, tileTypeMap: TILE_TYPE[], x: number, y: number): any {
+        if (x < 0 || y < 0 || x >= heightMap.width || y >= heightMap.height) { return PIXI.Texture.EMPTY; }
+        const slope = heightMap.getSlope(x, y);
+        if (slope !== SLOPE.FLAT) {
+            const textureName = GRASS_TILEMAP[slope];
+            return PIXI.utils.TextureCache[textureName] || PIXI.Texture.EMPTY;
+        }
+        const type_north = tileTypeMap[y * (heightMap.width + 1) + x] === TILE_TYPE.WATER ? TRANSITION.NORTH : 0;
+        const type_east = tileTypeMap[y * (heightMap.width + 1) + x + 1] === TILE_TYPE.WATER ? TRANSITION.EAST : 0;
+        const type_south = tileTypeMap[(y + 1) * (heightMap.width + 1) + x + 1] === TILE_TYPE.WATER ? TRANSITION.SOUTH : 0;
+        const type_west = tileTypeMap[(y + 1) * (heightMap.width + 1) + x] === TILE_TYPE.WATER ? TRANSITION.WEST : 0;
+        
+        // console.log(type_north, type_east, type_south, type_west);
+        const texture = TRANSITION_TILEMAP[type_north|type_east|type_south|type_west];
+
+        return PIXI.utils.TextureCache[texture] || PIXI.Texture.EMPTY;
     }
 
     private getTile(tileTypeMap: TILE_TYPE[], x: number, y: number): number {

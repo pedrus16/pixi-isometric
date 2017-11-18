@@ -23,7 +23,7 @@ export class Map {
         this._graphics = graphics;
         this._heightMap = heightMap;
         this._tileTypeMap = [];
-        for (let i = 0; i < this._heightMap.width * this._heightMap.height; ++i) { this._tileTypeMap.push(TILE_TYPE.GRASS); }
+        for (let i = 0; i < (this._heightMap.width + 1) * (this._heightMap.height + 1); ++i) { this._tileTypeMap.push(TILE_TYPE.GRASS); }
         this._isometricGraphics = new PixiIsometric(this._graphics, this._heightMap, this._tileTypeMap);
     }
 
@@ -53,14 +53,15 @@ export class Map {
         this._trees.forEach((tree) => tree.z = this._heightMap.getHeightAt(tree.x, tree.y));
     }
 
-    getTileAt(x: number, y: number): TILE_TYPE {
-        if (x < 0 || y < 0 || x >= this._heightMap.width || y >= this._heightMap.height) { return 0; }
-        return this._tileTypeMap[y * this._heightMap.width + x];
+    getVertexType(x: number, y: number): TILE_TYPE {
+        if (x < 0 || y < 0 || x >= (this._heightMap.width + 1) || y >= (this._heightMap.height + 1)) { return 0; }
+        return this._tileTypeMap[y * (this._heightMap.width + 1) + x];
     }
 
-    setTileAt(x: number, y: number, type: TILE_TYPE) {
+    setVertexType(x: number, y: number, type: TILE_TYPE) {
+        if (x < 0 || y < 0 || x >= (this._heightMap.width + 1) || y >= (this._heightMap.height + 1)) { return; }
         if (this._heightMap.getSlope(x, y) !== SLOPE.FLAT) { return; } 
-        this._tileTypeMap[y * this._heightMap.width + x] = type;
+        this._tileTypeMap[y * (this._heightMap.width + 1) + x] = type;
         this._isometricGraphics.update();
     }
 

@@ -143,7 +143,7 @@ export class Game {
                     this.map.setVertexType(pos[0], pos[1], TILE_TYPE.GRASS);
                 }
                 else {
-                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.DIRT);
+                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.SAND);
                 }
             }
             else if (this.ui.tool === 'water') {

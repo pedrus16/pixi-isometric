@@ -5,8 +5,8 @@ import { PixiGraphics } from './Graphics/PixiGraphics';
 import { PixiIsometric } from './Graphics/PixiIsometric';
 
 export enum TILE_TYPE {
-    DIRT,
     GRASS,
+    SAND,
     WATER,
 };
 

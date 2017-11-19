@@ -10,30 +10,30 @@ import { toIso } from '../utils';
 
 
 const GRASS_TILEMAP = {
-    [SLOPE.FLAT]: "grass_01.png",
+    [SLOPE.FLAT]: "grass_flat.png",
 
-    [SLOPE.NORTH]: "grass_05.png",
-    [SLOPE.EAST]: "grass_06.png",
-    [SLOPE.SOUTH]: "grass_07.png",
-    [SLOPE.WEST]: "grass_08.png",
+    [SLOPE.NORTH]: "grass_north.png",
+    [SLOPE.EAST]: "grass_east.png",
+    [SLOPE.SOUTH]: "grass_south.png",
+    [SLOPE.WEST]: "grass_west.png",
 
-    [SLOPE.NORTH|SLOPE.EAST]: "grass_09.png",
-    [SLOPE.SOUTH|SLOPE.EAST]: "grass_10.png",
-    [SLOPE.SOUTH|SLOPE.WEST]: "grass_11.png",
-    [SLOPE.NORTH|SLOPE.WEST]: "grass_12.png",
+    [SLOPE.NORTH|SLOPE.EAST]: "grass_north_east.png",
+    [SLOPE.SOUTH|SLOPE.EAST]: "grass_east_south.png",
+    [SLOPE.SOUTH|SLOPE.WEST]: "grass_south_west.png",
+    [SLOPE.NORTH|SLOPE.WEST]: "grass_north_west.png",
 
-    [SLOPE.NORTH|SLOPE.SOUTH]: "grass_13.png",
-    [SLOPE.WEST|SLOPE.EAST]: "grass_14.png",
+    [SLOPE.NORTH|SLOPE.SOUTH]: "grass_north_south.png",
+    [SLOPE.WEST|SLOPE.EAST]: "grass_east_west.png",
 
-    [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH]: "grass_17.png",
-    [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST]: "grass_18.png",
-    [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH]: "grass_19.png",
-    [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST]: "grass_20.png",
+    [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH]: "grass_north_east_south.png",
+    [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST]: "grass_east_south_west.png",
+    [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH]: "grass_north_south_west.png",
+    [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST]: "grass_north_east_west.png",
 
-    [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST|SLOPE.STEEP]: "grass_21.png",
-    [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH|SLOPE.STEEP]: "grass_22.png",
-    [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST|SLOPE.STEEP]: "grass_23.png",
-    [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH|SLOPE.STEEP]: "grass_24.png",
+    [SLOPE.NORTH|SLOPE.EAST|SLOPE.WEST|SLOPE.STEEP]: "grass_steep_north.png",
+    [SLOPE.EAST|SLOPE.SOUTH|SLOPE.NORTH|SLOPE.STEEP]: "grass_steep_east.png",
+    [SLOPE.SOUTH|SLOPE.WEST|SLOPE.EAST|SLOPE.STEEP]: "grass_steep_south.png",
+    [SLOPE.WEST|SLOPE.NORTH|SLOPE.SOUTH|SLOPE.STEEP]: "grass_steep_west.png",
 
     [SLOPE.CLIFF|SLOPE.NORTH]: "cliff_north.png",
     [SLOPE.CLIFF|SLOPE.EAST]: "cliff_east.png",
@@ -109,7 +109,7 @@ enum TRANSITION {
 
 const TRANSITION_TILEMAP = {
 
-    [TRANSITION.NONE]: "empty.png",
+    [TRANSITION.NONE]: "grass_flat.png",
 
     [TRANSITION.NORTH]: "north.png",
     [TRANSITION.EAST]: "east.png",
@@ -237,7 +237,7 @@ export class PixiIsometricTileMap {
     }
 
     private getTileMap(type: TILE_TYPE): any {
-        if (type === TILE_TYPE.DIRT) {
+        if (type === TILE_TYPE.SAND) {
             return DIRT_TILEMAP;
         }
         return GRASS_TILEMAP;

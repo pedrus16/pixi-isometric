@@ -94,16 +94,16 @@ export class Game {
                         );
                         this.levelHeight = height;
                     }
-                    this.map.heightMap.levelTile(pos[0], pos[1], this.levelHeight);
+                    this.map.levelTile(pos[0], pos[1], this.levelHeight);
                     this.map.updateGraphics();
                 }
                 else {
                     if (this.mouseReleased) {
                         if (this.input.isKeyDown('Control')) {
-                            this.map.heightMap.lowerTile(pos[0], pos[1]);
+                            this.map.lowerTile(pos[0], pos[1]);
                         }
                         else {
-                            this.map.heightMap.raiseTile(pos[0], pos[1]);
+                            this.map.raiseTile(pos[0], pos[1]);
                         }
                         this.map.updateGraphics();
                     }
@@ -148,16 +148,16 @@ export class Game {
             }
             else if (this.ui.tool === 'water') {
                 if (this.input.isKeyDown('Control')) {
-                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.GRASS);
-                    this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.GRASS);
-                    this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.GRASS);
-                    this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.GRASS);
+                    this.map.paintTile(pos[0], pos[1], TILE_TYPE.GRASS);
+                    // this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.GRASS);
+                    // this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.GRASS);
+                    // this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.GRASS);
                 }
                 else {
-                    this.map.setVertexType(pos[0], pos[1], TILE_TYPE.WATER);
-                    this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.WATER);
-                    this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.WATER);
-                    this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.WATER);
+                    this.map.paintTile(pos[0], pos[1], TILE_TYPE.WATER);
+                    // this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.WATER);
+                    // this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.WATER);
+                    // this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.WATER);
                 }
             }
             this.mouseReleased = false;

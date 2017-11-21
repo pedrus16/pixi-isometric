@@ -1,8 +1,8 @@
 import grassJSON from './tiles/grass/grass.json';
 import dirtJSON from './tiles/dirt.json';
 import cliffJSON from './cliff.json';
-// import water_transitionJSON from './tiles/water_transition.json';
-import water_transitionJSON from './tiles/grass_water/grass_water.json';
+import water_transitionJSON from './tiles/water_transition.json';
+// import water_transitionJSON from './tiles/grass_water/grass_water.json';
 import palmPNG from './palm01.png';
 
 

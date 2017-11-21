@@ -65,4 +65,40 @@ export class Map {
         this._isometricGraphics.update();
     }
 
+    raiseTile(x: number, y: number) {
+        this._heightMap.raiseTile(x, y);
+        this.updateType();
+    }
+
+    lowerTile(x: number, y: number) {
+        this._heightMap.lowerTile(x, y);
+        this.updateType();
+    }
+
+    levelTile(x: number, y: number, height: number) {
+        this._heightMap.levelTile(x, y, height);
+        this.updateType();
+    }
+
+    paintTile(x: number, y: number, type: TILE_TYPE) {
+        this.setVertexType(x, y, TILE_TYPE.WATER);
+        this.setVertexType(x + 1, y, TILE_TYPE.WATER);
+        this.setVertexType(x + 1, y + 1, TILE_TYPE.WATER);
+        this.setVertexType(x, y + 1, TILE_TYPE.WATER);
+    }
+
+    private updateType() {
+        for (let y = 0; y < this._heightMap.height; ++y) { 
+            for (let x = 0; x < this._heightMap.width; ++x) { 
+                const slope = this._heightMap.getSlope(x, y);
+                if (slope !== SLOPE.FLAT) {
+                    this._tileTypeMap[y * (this._heightMap.width + 1) + x] = TILE_TYPE.GRASS;
+                    this._tileTypeMap[y * (this._heightMap.width + 1) + (x + 1)] = TILE_TYPE.GRASS;
+                    this._tileTypeMap[(y + 1) * (this._heightMap.width + 1) + (x + 1)] = TILE_TYPE.GRASS;
+                    this._tileTypeMap[(y + 1) * (this._heightMap.width + 1) + x] = TILE_TYPE.GRASS;
+                }
+            }
+        }
+    }
+
 }

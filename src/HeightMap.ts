@@ -30,7 +30,6 @@ export class HeightMap {
     get height(): number { return this._height - 1; }
     get heightMap(): number[] { return this._heightMap; }
 
-
     getHeightAt(x: number, y: number): number {
         const minX = Math.floor(x);
         const maxX = Math.ceil(x);
@@ -132,7 +131,7 @@ export class HeightMap {
         return slope_north | slope_east | slope_south | slope_west | slope_steep | cliff;
     }
 
-    private setVertexHeightSafe(x: number, y: number, height: number, step = 1) {
+    private setVertexHeightSafe(x: number, y: number, height: number, step = 1): boolean {
         if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
         
         const center = this.getVertexHeight(x, y);

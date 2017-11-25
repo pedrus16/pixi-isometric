@@ -60,7 +60,12 @@ export class Map {
 
     setVertexType(x: number, y: number, type: TILE_TYPE) {
         if (x < 0 || y < 0 || x >= (this._heightMap.width + 1) || y >= (this._heightMap.height + 1)) { return; }
-        if (this._heightMap.getSlope(x, y) !== SLOPE.FLAT) { return; } 
+
+        if (this._heightMap.getSlope(x, y) !== SLOPE.FLAT) { return; }
+        if (this._heightMap.getSlope(x - 1, y - 1) !== SLOPE.FLAT) { return; }
+        if (this._heightMap.getSlope(x , y - 1) !== SLOPE.FLAT) { return; }
+        if (this._heightMap.getSlope(x - 1, y) !== SLOPE.FLAT) { return; }
+
         this._tileTypeMap[y * (this._heightMap.width + 1) + x] = type;
         this._isometricGraphics.update();
     }
@@ -81,10 +86,10 @@ export class Map {
     }
 
     paintTile(x: number, y: number, type: TILE_TYPE) {
-        this.setVertexType(x, y, TILE_TYPE.WATER);
-        this.setVertexType(x + 1, y, TILE_TYPE.WATER);
-        this.setVertexType(x + 1, y + 1, TILE_TYPE.WATER);
-        this.setVertexType(x, y + 1, TILE_TYPE.WATER);
+        this.setVertexType(x, y, type);
+        this.setVertexType(x + 1, y, type);
+        this.setVertexType(x + 1, y + 1, type);
+        this.setVertexType(x, y + 1, type);
     }
 
     private updateType() {

@@ -32,7 +32,7 @@ export class Game {
     }
 
     initialize() {
-        this.map = new Map(this.graphics, new HeightMap(64, 64));
+        this.map = new Map(this.graphics, new HeightMap(256, 256));
         this.ui = new PixiUI(this.graphics, this.input);
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
@@ -149,15 +149,9 @@ export class Game {
             else if (this.ui.tool === 'water') {
                 if (this.input.isKeyDown('Control')) {
                     this.map.paintTile(pos[0], pos[1], TILE_TYPE.GRASS);
-                    // this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.GRASS);
-                    // this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.GRASS);
-                    // this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.GRASS);
                 }
                 else {
                     this.map.paintTile(pos[0], pos[1], TILE_TYPE.WATER);
-                    // this.map.setVertexType(pos[0] + 1, pos[1], TILE_TYPE.WATER);
-                    // this.map.setVertexType(pos[0] + 1, pos[1] + 1, TILE_TYPE.WATER);
-                    // this.map.setVertexType(pos[0], pos[1] + 1, TILE_TYPE.WATER);
                 }
             }
             this.mouseReleased = false;

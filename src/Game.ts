@@ -5,6 +5,7 @@ import { Input, WHEEL_DIRECTION } from './Input';
 import { HeightMap } from './HeightMap';
 import { Camera } from './Camera';
 import { Tree } from './Tree';
+import { Man } from './Man';
 import { Map, TILE_TYPE } from './Map';
 
 export class Game {
@@ -36,6 +37,9 @@ export class Game {
         this.ui = new PixiUI(this.graphics, this.input);
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
+        const man = new Man(0, 0, 0);
+        this.graphics.camera.addChild(man.sprite);
+        this.addEntity(man);
     }
 
     update(dt: number): void {

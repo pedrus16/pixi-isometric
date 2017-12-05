@@ -67,7 +67,6 @@ export class Map {
         if (this._heightMap.getSlope(x - 1, y) !== SLOPE.FLAT) { return; }
 
         this._tileTypeMap[y * (this._heightMap.width + 1) + x] = type;
-        this._isometricGraphics.update();
     }
 
     raiseTile(x: number, y: number) {
@@ -90,6 +89,7 @@ export class Map {
         this.setVertexType(x + 1, y, type);
         this.setVertexType(x + 1, y + 1, type);
         this.setVertexType(x, y + 1, type);
+        this._isometricGraphics.update();
     }
 
     private updateType() {

@@ -4,6 +4,7 @@ import cliffJSON from './cliff.json';
 import water_transitionJSON from './tiles/water/water.json';
 // import water_transitionJSON from './tiles/grass_water/grass_water.json';
 import palmPNG from './palm01.png';
+import manPNG from './man.png';
 
 
 export class PixiGraphics {
@@ -33,6 +34,7 @@ export class PixiGraphics {
             dirtJSON, 
             cliffJSON, 
             palmPNG,
+            manPNG,
             water_transitionJSON,
         ]).load(() => {
             this.camera = new PIXI.Container();

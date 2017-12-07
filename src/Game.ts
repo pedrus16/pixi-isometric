@@ -37,7 +37,7 @@ export class Game {
         this.ui = new PixiUI(this.graphics, this.input);
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
-        const man = new Man(0, 0, 0);
+        const man = new Man(0, 0, 0, this.input, this.map);
         this.graphics.camera.addChild(man.sprite);
         this.addEntity(man);
     }

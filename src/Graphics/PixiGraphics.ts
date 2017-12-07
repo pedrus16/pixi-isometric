@@ -41,8 +41,8 @@ export class PixiGraphics {
             this.app.stage.addChild(this.camera);
             initCallback();
 
-            this.app.ticker.add(() => {
-                updateCallback(this.app.ticker.deltaTime);
+            this.app.ticker.add((delta: number) => {
+                updateCallback(delta);
             });
             
         });

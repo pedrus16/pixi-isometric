@@ -32,9 +32,9 @@ export class HeightMap {
 
     getHeightAt(x: number, y: number): number {
         const minX = Math.floor(x);
-        const maxX = Math.ceil(x);
+        const maxX = Math.floor(x + 1);
         const minY = Math.floor(y);
-        const maxY = Math.ceil(y);
+        const maxY = Math.floor(y + 1);
         const top_left = this.getVertexHeight(Math.floor(x), Math.floor(y));
         const top_right = this.getVertexHeight(Math.ceil(x), Math.floor(y));
         const bottom_left = this.getVertexHeight(Math.floor(x), Math.ceil(y));

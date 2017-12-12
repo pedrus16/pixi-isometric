@@ -207,7 +207,7 @@ export class HeightMap {
     }
 
     private setVertexHeightSafe(x: number, y: number, height: number, step = 1): Command[] {
-        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
+        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return []; }
         
         const center = this.getVertexHeight(x, y);
         if (center === height ) { return []; }

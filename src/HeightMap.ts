@@ -212,10 +212,10 @@ export class HeightMap {
         const center = this.getVertexHeight(x, y);
         if (center === height ) { return []; }
 
-        let north = this.getVertexHeight(x, y - 1);
-        let east = this.getVertexHeight(x + 1, y);
-        let south = this.getVertexHeight(x, y + 1);
-        let west = this.getVertexHeight(x - 1, y);
+        const north = this.getVertexHeight(x, y - 1);
+        const east = this.getVertexHeight(x + 1, y);
+        const south = this.getVertexHeight(x, y + 1);
+        const west = this.getVertexHeight(x - 1, y);
 
         const north_east = this.getVertexHeight(x + 1, y - 1);
         const north_west = this.getVertexHeight(x - 1, y - 1);
@@ -230,50 +230,50 @@ export class HeightMap {
                                             Math.abs(north_west - center) ===  CLIFF_HEIGHT || 
                                             Math.abs(south_east - center) ===  CLIFF_HEIGHT || 
                                             Math.abs(south_west - center) ===  CLIFF_HEIGHT)) {
-            return [];
+            return null;
         }
 
         let canChange = true;
         const commands: Command[] = [];
         if (north - height > step) {
             const c = this.setVertexHeightSafe(x, y - 1, height + step);
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         else if (north - height < -step) {
             const c = this.setVertexHeightSafe(x, y - 1, height - step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         if (east - height > step) {
             const c = this.setVertexHeightSafe(x + 1, y, height + step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         else if (east - height < -step) {
             const c = this.setVertexHeightSafe(x + 1, y, height - step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         if (south - height > step) {
             const c = this.setVertexHeightSafe(x, y + 1, height + step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         else if (south - height < -step) {
             const c = this.setVertexHeightSafe(x, y + 1, height - step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         if (west - height > step) {
             const c = this.setVertexHeightSafe(x - 1, y, height + step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         else if (west - height < -step) {
             const c = this.setVertexHeightSafe(x - 1, y, height - step)
-            canChange = canChange && c.length > 0;
-            commands.push(...c);
+            canChange = canChange && c !== null;
+            if (c) { commands.push(...c); }
         }
         if (canChange) {
             const command = new SetVertexHeightCommand(this, x, y, height);
@@ -281,7 +281,7 @@ export class HeightMap {
             commands.push(command);
             return commands;
         }
-        return [];
+        return null;
     }
 
     private generateHeightMap(t: number = 0) {

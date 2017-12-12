@@ -1,7 +1,7 @@
 import { Entity } from './Entity';
 import { PixiGraphics } from './Graphics/PixiGraphics';
 import { PixiUI } from './Graphics/PixiUI';
-import { Input, WHEEL_DIRECTION } from './Input';
+import { Input, WHEEL_DIRECTION } from './Input/Input';
 import { HeightMap } from './HeightMap';
 import { Camera } from './Camera';
 import { Tree } from './Tree';
@@ -21,6 +21,7 @@ export class Game {
     private levelHeight: number = 0;
     private elapsed: number = 0;
     private mouseReleased = true;
+    private zKeyReleased = true;
 
     constructor() {
         this.input = new Input();
@@ -33,7 +34,7 @@ export class Game {
     }
 
     initialize() {
-        this.map = new Map(this.graphics, new HeightMap(256, 256));
+        this.map = new Map(this.graphics, new HeightMap(64, 64));
         this.ui = new PixiUI(this.graphics, this.input);
         this.camera = new Camera(this.graphics, this.input);
         this.addEntity(this.camera);
@@ -85,6 +86,23 @@ export class Game {
     }
 
     private handleInput() {
+        if (this.input.isKeyDown('z')) {
+            if (this.input.isKeyDown('Control') && this.zKeyReleased) {
+                this.map.heightMap.undo();
+                this.map.updateGraphics();
+            }
+            this.zKeyReleased = false;
+        }
+        else if (this.input.isKeyDown('Z')) {
+            if (this.input.isKeyDown('Control') && this.zKeyReleased) {
+                this.map.heightMap.redo();
+                this.map.updateGraphics();
+            }
+            this.zKeyReleased = false;
+        }
+        else {
+            this.zKeyReleased = true;
+        }
         if (this.input.mouseLeftDown) {
             const pos = this.screenToTile(this.input.mouseX, this.input.mouseY);
             if (this.ui.tool === 'hill') {

@@ -1,6 +1,6 @@
 import { Entity } from './Entity';
 import { toIso } from './utils';
-import { Input } from './Input';
+import { Input } from './Input/Input';
 import { Map } from './Map';
 
 import manPNG from './Graphics/man.png';

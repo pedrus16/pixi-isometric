@@ -10,6 +10,35 @@ export enum SLOPE {
     CLIFF = 0b100000,
 };
 
+import { Command } from './Command';
+
+export class SetVertexHeightCommand extends Command {
+
+    private _heightmap: HeightMap;
+    private _x: number;
+    private _y: number;
+    private _height: number;
+
+    private _prev_height: number;
+
+    constructor(heightmap: HeightMap, x: number, y: number, height: number) {
+        super();
+        this._heightmap = heightmap;
+        this._x = x;
+        this._y = y;
+        this._height = height;
+    }
+
+    execute() {
+        this._prev_height = this._heightmap.getVertexHeight(this._x, this._y);
+        this._heightmap.setVertexHeight(this._x, this._y, this._height);
+    }
+
+    undo() {
+        this._heightmap.setVertexHeight(this._x, this._y, this._prev_height);
+    }
+
+}
 
 export class HeightMap {
 
@@ -17,6 +46,9 @@ export class HeightMap {
     
     private _width: number;
     private _height: number;
+
+    private _commands: Command[][] = [];
+    private _current: number = 0;
 
     constructor(width: number, height: number) {
         this._width = width + 1;
@@ -73,10 +105,18 @@ export class HeightMap {
         const height_se = this.getVertexHeight(x + 1, y + 1);
         const height_sw = this.getVertexHeight(x, y + 1);
 
-        this.setVertexHeightSafe(x, y, height_nw + 1);
-        this.setVertexHeightSafe(x + 1, y, height_ne + 1);
-        this.setVertexHeightSafe(x + 1, y + 1, height_se + 1);
-        this.setVertexHeightSafe(x, y + 1, height_sw + 1);
+        const commands = [
+            ...this.setVertexHeightSafe(x, y, height_nw + 1),
+            ...this.setVertexHeightSafe(x + 1, y, height_ne + 1),
+            ...this.setVertexHeightSafe(x + 1, y + 1, height_se + 1),
+            ...this.setVertexHeightSafe(x, y + 1, height_sw + 1),
+        ];
+        if (commands.length) { 
+            this._commands.splice(this._current + 1);
+            this._commands.push(commands); 
+            this._current = this._commands.length - 1; 
+        }
+
     }
 
     lowerTile(x: number, y: number) {
@@ -86,18 +126,33 @@ export class HeightMap {
         const height_se = this.getVertexHeight(x + 1, y + 1);
         const height_sw = this.getVertexHeight(x, y + 1);
 
-        this.setVertexHeightSafe(x, y, height_nw - 1);
-        this.setVertexHeightSafe(x + 1, y, height_ne - 1);
-        this.setVertexHeightSafe(x + 1, y + 1, height_se - 1);
-        this.setVertexHeightSafe(x, y + 1, height_sw - 1);
+        const commands = [
+            ...this.setVertexHeightSafe(x, y, height_nw - 1),
+            ...this.setVertexHeightSafe(x + 1, y, height_ne - 1),
+            ...this.setVertexHeightSafe(x + 1, y + 1, height_se - 1),
+            ...this.setVertexHeightSafe(x, y + 1, height_sw - 1),
+        ];
+        if (commands.length) {
+            this._commands.splice(this._current + 1);
+            this._commands.push(commands); 
+            this._current = this._commands.length - 1;
+        }
     }
 
     levelTile(x: number, y: number, height: number) {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
-        this.setVertexHeightSafe(x, y, height);    
-        this.setVertexHeightSafe(x + 1, y, height);
-        this.setVertexHeightSafe(x + 1, y + 1, height);
-        this.setVertexHeightSafe(x, y + 1, height);
+
+        const commands = [
+            ...this.setVertexHeightSafe(x, y, height),
+            ...this.setVertexHeightSafe(x + 1, y, height),
+            ...this.setVertexHeightSafe(x + 1, y + 1, height),
+            ...this.setVertexHeightSafe(x, y + 1, height),
+        ];
+        if (commands.length) {
+            this._commands.splice(this._current + 1);
+            this._commands.push(commands);
+            this._current = this._commands.length - 1;
+        }
     }
 
     setCliffHeight(tileX: number, tileY: number, step = 0) {
@@ -131,10 +186,32 @@ export class HeightMap {
         return slope_north | slope_east | slope_south | slope_west | slope_steep | cliff;
     }
 
-    private setVertexHeightSafe(x: number, y: number, height: number, step = 1): boolean {
+    undo() {
+        if (this._current < 0) { return; }
+        const current = this._commands[this._current];
+        this._current = this._current - 1;
+        if (current) {
+            for (let i = current.length - 1; i >= 0; --i) {
+                current[i].undo();
+            }
+        }
+    }
+
+    redo() {
+        if (this._current >= this._commands.length - 1) { return; }
+        this._current = this._current + 1;
+        const next = this._commands[this._current];
+        if (next) {
+            next.forEach((command) => command.execute());
+        }
+    }
+
+    private setVertexHeightSafe(x: number, y: number, height: number, step = 1): Command[] {
         if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
         
         const center = this.getVertexHeight(x, y);
+        if (center === height ) { return []; }
+
         let north = this.getVertexHeight(x, y - 1);
         let east = this.getVertexHeight(x + 1, y);
         let south = this.getVertexHeight(x, y + 1);
@@ -153,39 +230,58 @@ export class HeightMap {
                                             Math.abs(north_west - center) ===  CLIFF_HEIGHT || 
                                             Math.abs(south_east - center) ===  CLIFF_HEIGHT || 
                                             Math.abs(south_west - center) ===  CLIFF_HEIGHT)) {
-            return false;
+            return [];
         }
 
         let canChange = true;
+        const commands: Command[] = [];
         if (north - height > step) {
-            canChange = canChange && this.setVertexHeightSafe(x, y - 1, height + step);
+            const c = this.setVertexHeightSafe(x, y - 1, height + step);
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         else if (north - height < -step) {
-            canChange = canChange && this.setVertexHeightSafe(x, y - 1, height - step);
+            const c = this.setVertexHeightSafe(x, y - 1, height - step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         if (east - height > step) {
-            canChange = canChange && this.setVertexHeightSafe(x + 1, y, height + step);
+            const c = this.setVertexHeightSafe(x + 1, y, height + step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         else if (east - height < -step) {
-            canChange = canChange && this.setVertexHeightSafe(x + 1, y, height - step);
+            const c = this.setVertexHeightSafe(x + 1, y, height - step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         if (south - height > step) {
-            canChange = canChange && this.setVertexHeightSafe(x, y + 1, height + step);
+            const c = this.setVertexHeightSafe(x, y + 1, height + step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         else if (south - height < -step) {
-            canChange = canChange && this.setVertexHeightSafe(x, y + 1, height - step);
+            const c = this.setVertexHeightSafe(x, y + 1, height - step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         if (west - height > step) {
-            canChange = canChange && this.setVertexHeightSafe(x - 1, y, height + step);
+            const c = this.setVertexHeightSafe(x - 1, y, height + step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         else if (west - height < -step) {
-            canChange = canChange && this.setVertexHeightSafe(x - 1, y, height - step);
+            const c = this.setVertexHeightSafe(x - 1, y, height - step)
+            canChange = canChange && c.length > 0;
+            commands.push(...c);
         }
         if (canChange) {
-            this.setVertexHeight(x, y, height);
-            return true;
+            const command = new SetVertexHeightCommand(this, x, y, height);
+            command.execute();
+            commands.push(command);
+            return commands;
         }
-        return false;
+        return [];
     }
 
     private generateHeightMap(t: number = 0) {
@@ -203,20 +299,16 @@ export class HeightMap {
 
     private setTileHeight(x: number, y: number, height: number) {
         if (x < 0 || y < 0 || x >= this._width - 1 || y >= this._height - 1) { return; }
-        this.setVertexHeight(x, y, height);
-        this.setVertexHeight(x + 1, y, height);
-        this.setVertexHeight(x + 1, y + 1, height);
-        this.setVertexHeight(x, y + 1, height);
-    }
 
-    private incrementVertexHeight(x: number, y: number): boolean {
-        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
-        this.setVertexHeightSafe(x, y, this.getVertexHeight(x, y) + 1);
-    }
+        const commands = [
+            new SetVertexHeightCommand(this, x, y, height),
+            new SetVertexHeightCommand(this, x + 1, y, height),
+            new SetVertexHeightCommand(this, x + 1, y + 1, height),
+            new SetVertexHeightCommand(this, x, y + 1, height),
+        ];
+        commands.forEach((command) => command.execute());
+        this._commands.push(commands);
 
-    private decrementVertexHeight(x: number, y: number) {
-        if (x < 0 || y < 0 || x >= this._width || y >= this._height) { return; }
-        this.setVertexHeightSafe(x, y, this.getVertexHeight(x, y) - 1);
     }
 
 }

@@ -70,6 +70,7 @@ export class Input {
         window.addEventListener('keyup', (event) => {
             this._keys[event.key] = false;
         });
+
     }
 
     get mouseDown(): boolean { return this._mouseDown; }

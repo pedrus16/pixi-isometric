@@ -1,5 +1,5 @@
 import { PixiGraphics } from './PixiGraphics';
-import { Input } from '../Input';
+import { Input } from '../Input/Input';
 
 import '../style.css';
 
